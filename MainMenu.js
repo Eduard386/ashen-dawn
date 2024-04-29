@@ -46,7 +46,7 @@ export default class MainMenu extends Phaser.Scene {
                     energy_cell: 0,
                     frag_grenade: 0
                 },
-                enemiesToCreate: [],
+                enemiesToCreate: ['Rat', 'Mantis'],
                 levelLoot: [],
                 markerPosition: { x: 25, y: 25 }
             });
@@ -57,7 +57,7 @@ export default class MainMenu extends Phaser.Scene {
             .setInteractive()
             .setOrigin(0.5, 0.5)
             .on('pointerdown', () => {
-                this.scene.start('WorldMapScene'); // Запуск GameScene
+                this.scene.start('BattleScene');
             });
         this.levelText = this.add.text(100, 100, 'Level: ' + this.gameData.levelCount, { fontSize: '50px', fill: '#fff' });
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -75,6 +75,6 @@ export default class MainMenu extends Phaser.Scene {
     }
 
     startGame() {
-        this.scene.start('WorldMapScene');
+        this.scene.start('BattleScene');
     }
 }

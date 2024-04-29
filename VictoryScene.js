@@ -134,7 +134,7 @@ export default class VictoryScene extends Phaser.Scene {
         // Проверяем, была ли нажата клавиша "Пробел" или "Enter"
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
             this.victory_music.stop();
-            this.scene.start('WorldMapScene'); // Запуск GameScene
+            this.scene.start('MainMenu');
         }
     }
 }

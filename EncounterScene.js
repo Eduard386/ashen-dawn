@@ -65,7 +65,7 @@ export default class EncounterScene extends Phaser.Scene {
             this.scene.start('BattleScene');
         } else if (this.selectedOptionIndex === 2) {
             this.options[0] = 'Hi there. How are things going?'
-            this.scene.start('WorldMapScene');
+            this.scene.start('MainMenu');
         }
     }
 

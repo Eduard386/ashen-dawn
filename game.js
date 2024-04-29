@@ -1,5 +1,4 @@
 // game.js
-import WorldMapScene from './WorldMapScene.js';
 import MainMenu from './MainMenu.js';
 import BattleScene from './BattleScene.js';
 import DeadScene from './DeadScene.js';
@@ -17,7 +16,7 @@ var config = {
             debug: false // Включите для визуализации физических объектов
         }
     },
-    scene: [MainMenu, WorldMapScene, EncounterScene, BattleScene, DeadScene, VictoryScene],
+    scene: [MainMenu, EncounterScene, BattleScene, DeadScene, VictoryScene],
 };
 
 var game = new Phaser.Game(config);
