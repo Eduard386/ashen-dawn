@@ -292,7 +292,18 @@ export default class BattleScene extends Phaser.Scene {
         // Создание нового изображения (руки) из другой папки
         this.hand_sprite = this.add.sprite(this.cameras.main.width - 115, this.cameras.main.height - 88, 'hand ' + this.chosenWeapon.name).setScrollFactor(0);
 
-        let enemiesConfig = this.gameData.enemiesToCreate
+
+        // Select a random enemy object
+        const randomEnemy = this.enemies_all[Math.floor(Math.random() * this.enemies_all.length)];
+        // Determine the random amount of enemies to generate
+        const enemyCount = Math.floor(Math.random() * (randomEnemy.amount.max - randomEnemy.amount.min + 1)) + randomEnemy.amount.min;
+        // Create an array of random enemy names
+        const enemyNames = [];
+        for (let i = 0; i < enemyCount; i++) {
+            const randomName = randomEnemy.title[Math.floor(Math.random() * randomEnemy.title.length)];
+            enemyNames.push(randomName);
+        }
+        let enemiesConfig = enemyNames;
 
         enemiesConfig.forEach(name => {
             let enemy = this.createEnemy(name);
@@ -507,23 +518,23 @@ export default class BattleScene extends Phaser.Scene {
                 },
                 current_weapon: 'Baseball bat',
                 current_armor: 'Leather Jacket',
-                weapons: ['Baseball bat', '9mm pistol'],
+                weapons: ['Baseball bat', '44 Magnum revolver', '9mm pistol', '44 Desert Eagle', 'Laser pistol',
+                            'SMG', 'Frag grenade', 'Combat shotgun', 'Laser rifle', 'Minigun'],
                 med: {
-                    first_aid_kit: 0,
-                    jet: 0,
-                    buffout: 0,
-                    mentats: 0,
-                    psycho: 0
+                    first_aid_kit: 50,
+                    jet: 50,
+                    buffout: 50,
+                    mentats: 50,
+                    psycho: 50
                 },
                 ammo: {
                     mm_9: 500,
-                    magnum_44: 12,
-                    mm_12: 0,
-                    mm_5_45: 0,
-                    energy_cell: 0,
-                    frag_grenade: 0
+                    magnum_44: 500,
+                    mm_12: 500,
+                    mm_5_45: 500,
+                    energy_cell: 500,
+                    frag_grenade: 500
                 },
-                enemiesToCreate: [],
                 levelLoot: [],
                 markerPosition: { x: 25, y: 25 }
             });

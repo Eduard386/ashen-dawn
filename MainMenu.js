@@ -30,23 +30,23 @@ export default class MainMenu extends Phaser.Scene {
                 },
                 current_weapon: 'Baseball bat',
                 current_armor: 'Leather Jacket',
-                weapons: ['Baseball bat', '9mm pistol'],
+                weapons: ['Baseball bat', '44 Magnum revolver', '9mm pistol', '44 Desert Eagle', 'Laser pistol',
+                            'SMG', 'Frag grenade', 'Combat shotgun', 'Laser rifle', 'Minigun'],
                 med: {
-                    first_aid_kit: 0,
-                    jet: 0,
-                    buffout: 0,
-                    mentats: 0,
-                    psycho: 0
+                    first_aid_kit: 50,
+                    jet: 50,
+                    buffout: 50,
+                    mentats: 50,
+                    psycho: 50
                 },
                 ammo: {
                     mm_9: 500,
-                    magnum_44: 12,
-                    mm_12: 0,
-                    mm_5_45: 0,
-                    energy_cell: 0,
-                    frag_grenade: 0
+                    magnum_44: 500,
+                    mm_12: 500,
+                    mm_5_45: 500,
+                    energy_cell: 500,
+                    frag_grenade: 500
                 },
-                enemiesToCreate: ['Rat', 'Mantis'],
                 levelLoot: [],
                 markerPosition: { x: 25, y: 25 }
             });
