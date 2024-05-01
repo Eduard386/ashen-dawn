@@ -5,7 +5,7 @@ export default class BattleScene extends Phaser.Scene {
         this.soundtrackNames = ['A Traders Life (in NCR)', 'All-Clear Signal (Vault City)', 'Beyond The Canyon (Arroyo)',
             'California Revisited (Worldmap on foot)', 'Khans of New California (in the Den)', 'Moribund World (in Klamath)',
             'My Chrysalis Highwayman (Worldmap with Car)']; // Замените на реальные названия треков
-        this.amountOfMainBackgrounds = 1;
+        this.amountOfMainBackgrounds = 3;
         this.armors = [
             { name: 'Leather Jacket', ac: 8, threshold: 0, resistance: 0.2 },
             { name: 'Leather Armor', ac: 15, threshold: 2, resistance: 0.25 },
@@ -272,7 +272,7 @@ export default class BattleScene extends Phaser.Scene {
 
     preload() {
         for (let i = 1; i <= this.amountOfMainBackgrounds; i++) {
-            this.load.image('backgroundMain' + i, 'assets/images/backgrounds/battle/backgroundMain' + i + '.png');
+            this.load.image('backgroundMain' + i, 'assets/images/backgrounds/battle/backgroundMain' + i + '.jpg');
         }
         this.armors.forEach(armor => {
             this.load.image('armor ' + armor.name, 'assets/images/armors/' + armor.name + '.png');
