@@ -36,7 +36,6 @@ export default class BattleScene extends Phaser.Scene {
                 name: 'Rat', 
                 type: 'creature',
                 amount: { min: 6, max: 10 }, 
-                experience: 25, 
                 members: [
                     {
                         title: 'Rat',
@@ -50,7 +49,6 @@ export default class BattleScene extends Phaser.Scene {
                 name: 'Mantis', 
                 type: 'creature',
                 amount: { min: 1, max: 4 }, 
-                experience: 50,
                 members: [
                     {
                         title: 'Mantis',
@@ -64,7 +62,6 @@ export default class BattleScene extends Phaser.Scene {
                 name: 'Tribe', 
                 type: 'human',
                 amount: { min: 2, max: 4 }, 
-                experience: 50,
                 members: [
                     {
                         title: 'Tribe man 1',
@@ -100,45 +97,35 @@ export default class BattleScene extends Phaser.Scene {
             },
             {
                 maxLevel: 1, 
-                name: 'Cannibals', 
+                name: 'Raiders', 
                 type: 'human',
-                amount: { min: 2, max: 4 }, 
-                experience: 50,
+                amount: { min: 1, max: 2 }, 
                 members: [
                     {
                         title: 'Cannibal man 1',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal man 2',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal man 3',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal woman 1',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal woman 2',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
                     },
-                ]
-            },
-            {
-                maxLevel: 1, 
-                name: 'Raiders', 
-                type: 'human',
-                amount: { min: 1, max: 1 }, 
-                experience: 50,
-                members: [
                     {
                         title: 'Raider - Leather Jacket - Baseball bat',
                         defence: leather_jacket,
@@ -665,8 +652,7 @@ export default class BattleScene extends Phaser.Scene {
                 } else {
                     this.sound.add(`${enemy.name} - died`).play()
                 }
-                this.gameData.experience += enemy.experience
-                if (enemy.attack.weapon == 'Baseball bat') {
+                if (enemy.attack.weapon == 'Baseball bat' || enemy.attack.weapon == 'Knife') {
                     this.gameData.levelLoot.push(0);
                 }
                 if (enemy.attack.weapon == 'Laser pistol') {
@@ -711,7 +697,6 @@ export default class BattleScene extends Phaser.Scene {
             this.registry.set('gameData', {
                 levelCount: 1,
                 health: 15,
-                experience: 0,
                 skills: {
                     small_guns: 75,
                     big_guns: 75,
@@ -924,19 +909,18 @@ export default class BattleScene extends Phaser.Scene {
         this.heroStatsTexts = [];
 
         // Добавление новых текстовых объектов
-        this.heroStatsTexts.push(this.add.text(710, 20, `Level ${this.gameData.levelCount}: ${this.gameData.experience}/1000`, hero_data_text_params).setScrollFactor(0));
-        this.heroStatsTexts.push(this.add.text(710, 40, `Armor Class: ${this.chosenArmor.ac}`, hero_data_text_params).setScrollFactor(0));
-        this.heroStatsTexts.push(this.add.text(710, 60, `Threshold: ${this.chosenArmor.threshold}`, hero_data_text_params).setScrollFactor(0));
-        this.heroStatsTexts.push(this.add.text(710, 80, `Resistance: ${Math.round(this.chosenArmor.resistance * 100)}%`, hero_data_text_params).setScrollFactor(0));
-        this.heroStatsTexts.push(this.add.text(710, 100, `Damage: ${Math.round(this.chosenWeapon.damage.min)}-${Math.round(this.chosenWeapon.damage.max)}`, hero_data_text_params).setScrollFactor(0));
-        this.heroStatsTexts.push(this.add.text(710, 120, `Cooldown: ${this.chosenWeapon.cooldown / 1000}s`, hero_data_text_params).setScrollFactor(0));
-        this.heroStatsTexts.push(this.add.text(710, 140, `Critical: ${this.critical_chance}%`, hero_data_text_params).setScrollFactor(0));
+        this.heroStatsTexts.push(this.add.text(710, 20, `Armor Class: ${this.chosenArmor.ac}`, hero_data_text_params).setScrollFactor(0));
+        this.heroStatsTexts.push(this.add.text(710, 40, `Threshold: ${this.chosenArmor.threshold}`, hero_data_text_params).setScrollFactor(0));
+        this.heroStatsTexts.push(this.add.text(710, 60, `Resistance: ${Math.round(this.chosenArmor.resistance * 100)}%`, hero_data_text_params).setScrollFactor(0));
+        this.heroStatsTexts.push(this.add.text(710, 80, `Damage: ${Math.round(this.chosenWeapon.damage.min)}-${Math.round(this.chosenWeapon.damage.max)}`, hero_data_text_params).setScrollFactor(0));
+        this.heroStatsTexts.push(this.add.text(710, 100, `Cooldown: ${this.chosenWeapon.cooldown / 1000}s`, hero_data_text_params).setScrollFactor(0));
+        this.heroStatsTexts.push(this.add.text(710, 120, `Critical: ${this.critical_chance}%`, hero_data_text_params).setScrollFactor(0));
     }
 
     use_first_aid_kit() {
         if (this.gameData.med.first_aid_kit > 0) {
             this.gameData.med.first_aid_kit -= 1
-            this.playerHealth += Phaser.Math.Between(10, 20);
+            this.playerHealth += Phaser.Math.Between(7, 10);
             if (this.playerHealth > this.maxPlayerHealth) {
                 this.playerHealth = this.maxPlayerHealth;
             }
@@ -1117,7 +1101,6 @@ export default class BattleScene extends Phaser.Scene {
             },
             shots: enemyConfig.attack.shots
         };
-        enemy.experience = enemyConfig.experience;
         enemy.speed = speed;
         enemy.direction = direction;
         enemy.moveThreshold = moveThreshold;

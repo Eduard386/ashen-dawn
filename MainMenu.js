@@ -13,7 +13,6 @@ export default class MainMenu extends Phaser.Scene {
             this.registry.set('gameData', {
                 levelCount: 1,
                 health: 15,
-                experience: 0,
                 skills: {
                     small_guns: 75,
                     big_guns: 75,
