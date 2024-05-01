@@ -167,7 +167,7 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Raider - Leather Jacket - Combat shotgun',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun bat', damage: { min: 15, max: 25 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 15, max: 25 }, shots: 3 },
                     },
                     {
                         title: 'Raider - Leather Jacket - Frag grenade',
@@ -178,11 +178,6 @@ export default class BattleScene extends Phaser.Scene {
                         title: 'Raider - Leather Jacket - Laser rifle',
                         defence: leather_jacket,
                         attack: { hit_chance: 60, weapon: 'Laser rifle', damage: { min: 25, max: 50 }, shots: 1 },
-                    },
-                    {
-                        title: 'Raider - Leather Jacket - Minigun',
-                        defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Minigun', damage: { min: 7, max: 11 }, shots: 40 },
                     },
                     {
                         title: 'Raider - Leather Jacket - SMG',
@@ -217,12 +212,12 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Raider - Leather Armor - Combat shotgun',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun bat', damage: { min: 15, max: 25 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 15, max: 25 }, shots: 3 },
                     },
                     {
                         title: 'Raider - Leather Armor - SMG',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: 'Frag grenade', damage: { min: 5, max: 12 }, shots: 10 },
+                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 5, max: 12 }, shots: 10 },
                     },
                     {
                         title: 'Raider - Metal Armor - Baseball bat',
@@ -252,12 +247,12 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Raider - Metal Armor - Combat shotgun',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun bat', damage: { min: 15, max: 25 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 15, max: 25 }, shots: 3 },
                     },
                     {
                         title: 'Raider - Metal Armor - SMG',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: 'Frag grenade', damage: { min: 5, max: 12 }, shots: 10 },
+                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 5, max: 12 }, shots: 10 },
                     },
                 ]
             },
@@ -300,7 +295,6 @@ export default class BattleScene extends Phaser.Scene {
         this.load.image('Raider - Leather Jacket - Frag grenade', 'assets/images/enemies/Raider - Leather Jacket - Frag grenade.png');
         this.load.image('Raider - Leather Jacket - Combat shotgun', 'assets/images/enemies/Raider - Leather Jacket - Combat shotgun.png');
         this.load.image('Raider - Leather Jacket - Laser rifle', 'assets/images/enemies/Raider - Leather Jacket - Laser rifle.png');
-        this.load.image('Raider - Leather Jacket - Minigun', 'assets/images/enemies/Raider - Leather Jacket - Minigun.png');
         this.load.image('Raider - Leather Armor - Baseball bat', 'assets/images/enemies/Raider - Leather Armor - Baseball bat.png');
         this.load.image('Raider - Leather Armor - 44 Magnum revolver', 'assets/images/enemies/Raider - Leather Armor - 44 Magnum revolver.png');
         this.load.image('Raider - Leather Armor - 9mm pistol', 'assets/images/enemies/Raider - Leather Armor - 44 Magnum revolver.png');
