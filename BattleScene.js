@@ -1,7 +1,10 @@
+import GameEffects from './Effects.js';
+
 export default class BattleScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'BattleScene' });
+        this.effects = new GameEffects(this);
         this.soundtrackNames = ['A Traders Life (in NCR)', 'All-Clear Signal (Vault City)', 'Beyond The Canyon (Arroyo)',
             'California Revisited (Worldmap on foot)', 'Khans of New California (in the Den)', 'Moribund World (in Klamath)',
             'My Chrysalis Highwayman (Worldmap with Car)']; // Замените на реальные названия треков
@@ -623,16 +626,7 @@ export default class BattleScene extends Phaser.Scene {
         }
 
         // Получение положения камеры
-        const cameraX = this.cameras.main.scrollX;
-        const cameraY = this.cameras.main.scrollY;
-
-        // Обновление прямоугольника прицела
-        let crosshairRect = new Phaser.Geom.Rectangle(
-            cameraX + this.crosshair_red.x - this.crosshair_red.width / 2,
-            cameraY + this.crosshair_red.y - this.crosshair_red.height / 2,
-            this.crosshair_red.width,
-            this.crosshair_red.height
-        );
+        let crosshairRect = this.crosshairRect();
 
         if (Phaser.Input.Keyboard.JustDown(this.upKey)) {
             this.switchWeapon(1)
@@ -861,66 +855,6 @@ export default class BattleScene extends Phaser.Scene {
 
     }
 
-    attackEffect(enemy) {
-        enemy.setScale(1.1);
-        this.time.delayedCall(1000, () => {
-            enemy.setScale(1);
-        });
-    }
-
-    tiltEffect() {
-        const tiltDirection = Math.random() < 0.5 ? -1 : 1;
-        const maxRotation = 0.05 * tiltDirection; // Максимальный угол наклона
-
-        // Немного увеличиваем масштаб перед наклоном
-        this.tweens.add({
-            targets: this.cameras.main,
-            zoom: 1.2, // небольшое увеличение масштаба
-            duration: 250, // половина времени для увеличения
-            ease: 'Sine.easeInOut',
-            onComplete: () => {
-                // Наклон камеры
-                this.tweens.add({
-                    targets: this.cameras.main,
-                    rotation: maxRotation,
-                    duration: 250, // 1 секунда для наклона
-                    ease: 'Sine.easeInOut',
-                    onComplete: () => {
-                        // Возвращение камеры в исходное положение
-                        this.tweens.add({
-                            targets: this.cameras.main,
-                            rotation: 0,
-                            zoom: 1, // возвращение к исходному масштабу
-                            duration: 250, // 1 секунда для восстановления
-                            ease: 'Sine.easeInOut'
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    bloodSplashEffect() {
-        let bloodSplash = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'blood').setDepth(50).setScrollFactor(0);
-        this.sound.add(`player wounded`).play();
-        // Твин для покраснения фона
-        this.tweens.add({
-            targets: this.background,
-            tint: 0xff0000, // красный цвет
-            duration: 375, // половина времени для покраснения
-            yoyo: true, // автоматическое возвращение к исходному цвету
-            hold: 0, // удержание красного цвета
-            onComplete: () => {
-                // Убедитесь, что tint сброшен
-                this.background.clearTint();
-            }
-        });
-
-        this.time.delayedCall(750, () => {  // Удаляем изображение через 1 секунду
-            bloodSplash.destroy();
-        });
-    }
-
     show_stats() {
         const hero_data_text_params = {fontSize: '14px', fill: '#000000', fontFamily: 'Arial', fontWeight: 'bold'}
         // Удаление старых текстовых объектов
@@ -1039,66 +973,55 @@ export default class BattleScene extends Phaser.Scene {
         }
         this.bullets_in_current_clip = 0
         const currentIndex = this.gameData.weapons.indexOf(this.gameData.current_weapon);
-    let nextIndex = currentIndex;
-    let attempts = 0; // Prevent infinite loops
+        let nextIndex = currentIndex;
+        let attempts = 0; // Prevent infinite loops
 
-    do {
-        // Calculate the next index, considering the length of the weapons array
-        nextIndex = (nextIndex + next + this.gameData.weapons.length) % this.gameData.weapons.length;
-        const nextWeaponName = this.gameData.weapons[nextIndex];
-        const nextWeapon = this.weapons.find(weapon => weapon.name === nextWeaponName);
+        do {
+            // Calculate the next index, considering the length of the weapons array
+            nextIndex = (nextIndex + next + this.gameData.weapons.length) % this.gameData.weapons.length;
+            const nextWeaponName = this.gameData.weapons[nextIndex];
+            const nextWeapon = this.weapons.find(weapon => weapon.name === nextWeaponName);
 
-        // Check if the next weapon is either melee or has ammo
-        if (nextWeapon.type === 'melee' || this.gameData.ammo[nextWeapon.type] > 0) {
-            this.gameData.current_weapon = nextWeaponName;
-            this.chosenWeapon = JSON.parse(JSON.stringify(nextWeapon));
-            break;
+            // Check if the next weapon is either melee or has ammo
+            if (nextWeapon.type === 'melee' || this.gameData.ammo[nextWeapon.type] > 0) {
+                this.gameData.current_weapon = nextWeaponName;
+                this.chosenWeapon = JSON.parse(JSON.stringify(nextWeapon));
+                break;
+            }
+            attempts++;
+        } while (attempts < this.gameData.weapons.length); // Avoid infinite loop by limiting attempts
+
+        if (attempts >= this.gameData.weapons.length) {
+            console.error("No available weapons with ammo found after a full cycle.");
+            return; // No suitable weapon found
         }
-        attempts++;
-    } while (attempts < this.gameData.weapons.length); // Avoid infinite loop by limiting attempts
 
-    if (attempts >= this.gameData.weapons.length) {
-        console.error("No available weapons with ammo found after a full cycle.");
-        return; // No suitable weapon found
-    }
+        this.reload();
+        this.updateClipBar();
 
-    this.reload();
-    this.updateClipBar();
+        // Clean up previous weapon sprites and text
+        if (this.hand_sprite) {
+            this.hand_sprite.destroy();
+        }
+        if (this.ammo_sprite) {
+            this.ammo_sprite.destroy();
+        }
+        if (this.ammoText) {
+            this.ammoText.destroy();
+        }
 
-    // Clean up previous weapon sprites and text
-    if (this.hand_sprite) {
-        this.hand_sprite.destroy();
+        // Create new sprites and text for the current weapon
+        this.hand_sprite = this.add.sprite(this.cameras.main.width - 115, this.cameras.main.height - 88, 'hand ' + this.chosenWeapon.name).setScrollFactor(0);
+        if (this.chosenWeapon.type !== 'melee') {
+            const count = this.gameData.ammo[this.chosenWeapon.type];
+            this.ammoText = this.add.text(30, 495, '', this.text_params);
+            this.ammoText.setText(count > 0 ? `x${count}` : '').setScrollFactor(0);
+            this.ammo_sprite = this.add.sprite(25, 495, this.chosenWeapon.type).setOrigin(0, 0).setScrollFactor(0);
+        }
     }
-    if (this.ammo_sprite) {
-        this.ammo_sprite.destroy();
-    }
-    if (this.ammoText) {
-        this.ammoText.destroy();
-    }
-
-    // Create new sprites and text for the current weapon
-    this.hand_sprite = this.add.sprite(this.cameras.main.width - 115, this.cameras.main.height - 88, 'hand ' + this.chosenWeapon.name).setScrollFactor(0);
-    if (this.chosenWeapon.type !== 'melee') {
-        const count = this.gameData.ammo[this.chosenWeapon.type];
-        this.ammoText = this.add.text(30, 495, '', this.text_params);
-        this.ammoText.setText(count > 0 ? `x${count}` : '').setScrollFactor(0);
-        this.ammo_sprite = this.add.sprite(25, 495, this.chosenWeapon.type).setOrigin(0, 0).setScrollFactor(0);
-    }
-}
-
 
     checkIntersectionWithEnemies() {
-        // Получение положения камеры
-        const cameraX = this.cameras.main.scrollX;
-        const cameraY = this.cameras.main.scrollY;
-
-        // Обновление прямоугольника прицела с учетом положения камеры
-        let crosshairRect = new Phaser.Geom.Rectangle(
-            cameraX + this.crosshair_red.x - this.crosshair_red.width / 2,
-            cameraY + this.crosshair_red.y - this.crosshair_red.height / 2,
-            this.crosshair_red.width,
-            this.crosshair_red.height
-        );
+        let crosshairRect = this.crosshairRect();
 
         // Проверка пересечений с каждым врагом
         return this.enemies.some(enemy => {
@@ -1218,7 +1141,7 @@ export default class BattleScene extends Phaser.Scene {
 
     enemyAttack(enemy) {
         if (enemy.canAttack) {
-            this.attackEffect(enemy);
+            this.effects.attackEffect(enemy);
             let hitChance = Phaser.Math.Between(0, 100); // проверка навыка нападения
             if (hitChance < enemy.attack.hit_chance) {  // если враг папал
                 let checkAc = Phaser.Math.Between(0, 100);  // проверка AC игрока
@@ -1242,8 +1165,8 @@ export default class BattleScene extends Phaser.Scene {
                     }
 
                     // Показываем изображение крови
-                    this.tiltEffect();
-                    this.bloodSplashEffect();
+                    this.effects.tiltEffect();
+                    this.effects.bloodSplashEffect();
 
                     // Duration and intensity of the shake effect
                     const shakeIntensity = 0.01; // Intensity of the shake
@@ -1251,7 +1174,7 @@ export default class BattleScene extends Phaser.Scene {
                     this.cameras.main.shake(shakeDuration, shakeIntensity);
                 } else {
                     console.log(`You endure damage without consequences.`)
-                    this.tiltEffect();
+                    this.effects.tiltEffect();
                 }
             } else {
                 console.log(`${enemy.name} missed.`)
