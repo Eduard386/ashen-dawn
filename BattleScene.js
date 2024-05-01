@@ -5,7 +5,7 @@ export default class BattleScene extends Phaser.Scene {
         this.soundtrackNames = ['A Traders Life (in NCR)', 'All-Clear Signal (Vault City)', 'Beyond The Canyon (Arroyo)',
             'California Revisited (Worldmap on foot)', 'Khans of New California (in the Den)', 'Moribund World (in Klamath)',
             'My Chrysalis Highwayman (Worldmap with Car)']; // Замените на реальные названия треков
-        this.amountOfMainBackgrounds = 3;
+        this.amountOfMainBackgrounds = 4;
         this.armors = [
             { name: 'Leather Jacket', ac: 8, threshold: 1, resistance: 0 },
             { name: 'Leather Armor', ac: 15, threshold: 2, resistance: 0 },
@@ -33,19 +33,21 @@ export default class BattleScene extends Phaser.Scene {
         this.enemies_all = [
             {
                 maxLevel: 1, 
+                encounterChance: 15,
                 name: 'Rat', 
                 type: 'creature',
                 amount: { min: 6, max: 10 }, 
                 members: [
                     {
                         title: 'Rat',
-                        defence: { health: 6, ac: 6, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 40, damage: { min: 1, max: 3 }, shots: 1 },
+                        defence: { health: 4, ac: 6, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, damage: { min: 2, max: 4 }, shots: 1 },
                     }
                 ]
             },
             {
                 maxLevel: 1, 
+                encounterChance: 15,
                 name: 'Mantis', 
                 type: 'creature',
                 amount: { min: 1, max: 4 }, 
@@ -59,6 +61,7 @@ export default class BattleScene extends Phaser.Scene {
             },
             {
                 maxLevel: 1, 
+                encounterChance: 15,
                 name: 'Tribe', 
                 type: 'human',
                 amount: { min: 2, max: 4 }, 
@@ -71,65 +74,66 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Tribe man 2',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Tribe man 3',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Tribe man 4',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Tribe woman 1',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Tribe woman 2',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 5 }, shots: 1 },
                     }
                 ]
             },
             {
                 maxLevel: 1, 
+                encounterChance: 55,
                 name: 'Raiders', 
                 type: 'human',
-                amount: { min: 1, max: 2 }, 
+                amount: { min: 1, max: 3 }, 
                 members: [
                     {
                         title: 'Cannibal man 1',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal man 2',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal man 3',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal woman 1',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal woman 2',
                         defence: no_armor,
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Jacket - Baseball bat',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 4, max: 4 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 4, max: 5 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Jacket - 9mm pistol',
@@ -454,11 +458,26 @@ export default class BattleScene extends Phaser.Scene {
         // Создание нового изображения (руки) из другой папки
         this.hand_sprite = this.add.sprite(this.cameras.main.width - 115, this.cameras.main.height - 88, 'hand ' + this.chosenWeapon.name).setScrollFactor(0);
 
+        function selectRandomEnemyByChance(enemies) {
+            let totalWeight = enemies.reduce((sum, enemy) => sum + enemy.encounterChance, 0);
+            let randomWeight = Math.random() * totalWeight;
+            let weightSum = 0;
+        
+            for (let enemy of enemies) {
+                weightSum += enemy.encounterChance;
+                if (randomWeight <= weightSum) {
+                    return enemy;
+                }
+            }
+            return null;  // В случае если что-то пойдет не так
+        }
 
-        // Select a random enemy object
-        const randomEnemy = this.enemies_all[Math.floor(Math.random() * this.enemies_all.length)];
+        // Select a random enemy object based on encounter chance
+        const randomEnemy = selectRandomEnemyByChance(this.enemies_all);
+
         // Determine the random amount of enemies to generate
         const enemyCount = Math.floor(Math.random() * (randomEnemy.amount.max - randomEnemy.amount.min + 1)) + randomEnemy.amount.min;
+
         // Create an array of random enemy configurations
         const enemyConfigs = [];
         for (let i = 0; i < enemyCount; i++) {
@@ -920,7 +939,7 @@ export default class BattleScene extends Phaser.Scene {
     use_first_aid_kit() {
         if (this.gameData.med.first_aid_kit > 0) {
             this.gameData.med.first_aid_kit -= 1
-            this.playerHealth += Phaser.Math.Between(7, 10);
+            this.playerHealth += Phaser.Math.Between(7, 12);
             if (this.playerHealth > this.maxPlayerHealth) {
                 this.playerHealth = this.maxPlayerHealth;
             }
@@ -1020,31 +1039,53 @@ export default class BattleScene extends Phaser.Scene {
         }
         this.bullets_in_current_clip = 0
         const currentIndex = this.gameData.weapons.indexOf(this.gameData.current_weapon);
-        const nextIndex = (currentIndex + next + this.gameData.weapons.length) % this.gameData.weapons.length;
-        this.gameData.current_weapon = this.gameData.weapons[nextIndex];
-        const foundWeapon = this.weapons.find(weapon => weapon.name === this.gameData.current_weapon);
-        this.chosenWeapon = JSON.parse(JSON.stringify(foundWeapon));
-        this.reload();
-        this.updateClipBar();
+    let nextIndex = currentIndex;
+    let attempts = 0; // Prevent infinite loops
 
-        if (this.hand_sprite) {
-            this.hand_sprite.destroy();
-        }
-        if (this.ammo_sprite) {
-            this.ammo_sprite.destroy();
-        }
-        if (this.ammoText) {
-            this.ammoText.destroy();
-        }
-        this.hand_sprite = this.add.sprite(this.cameras.main.width - 115, this.cameras.main.height - 88, 'hand ' + this.chosenWeapon.name).setScrollFactor(0);
-        if (this.chosenWeapon.type !== 'melee') {
-            const count = this.gameData.ammo[this.chosenWeapon.type];
-            this.ammoText = this.add.text(30, 495, '', this.text_params);
-            this.ammoText.setText(count > 0 ? `x${count}` : '').setScrollFactor(0);
-            this.ammo_sprite = this.add.sprite(25, 495, this.chosenWeapon.type).setOrigin(0, 0).setScrollFactor(0);
-        }
+    do {
+        // Calculate the next index, considering the length of the weapons array
+        nextIndex = (nextIndex + next + this.gameData.weapons.length) % this.gameData.weapons.length;
+        const nextWeaponName = this.gameData.weapons[nextIndex];
+        const nextWeapon = this.weapons.find(weapon => weapon.name === nextWeaponName);
 
+        // Check if the next weapon is either melee or has ammo
+        if (nextWeapon.type === 'melee' || this.gameData.ammo[nextWeapon.type] > 0) {
+            this.gameData.current_weapon = nextWeaponName;
+            this.chosenWeapon = JSON.parse(JSON.stringify(nextWeapon));
+            break;
+        }
+        attempts++;
+    } while (attempts < this.gameData.weapons.length); // Avoid infinite loop by limiting attempts
+
+    if (attempts >= this.gameData.weapons.length) {
+        console.error("No available weapons with ammo found after a full cycle.");
+        return; // No suitable weapon found
     }
+
+    this.reload();
+    this.updateClipBar();
+
+    // Clean up previous weapon sprites and text
+    if (this.hand_sprite) {
+        this.hand_sprite.destroy();
+    }
+    if (this.ammo_sprite) {
+        this.ammo_sprite.destroy();
+    }
+    if (this.ammoText) {
+        this.ammoText.destroy();
+    }
+
+    // Create new sprites and text for the current weapon
+    this.hand_sprite = this.add.sprite(this.cameras.main.width - 115, this.cameras.main.height - 88, 'hand ' + this.chosenWeapon.name).setScrollFactor(0);
+    if (this.chosenWeapon.type !== 'melee') {
+        const count = this.gameData.ammo[this.chosenWeapon.type];
+        this.ammoText = this.add.text(30, 495, '', this.text_params);
+        this.ammoText.setText(count > 0 ? `x${count}` : '').setScrollFactor(0);
+        this.ammo_sprite = this.add.sprite(25, 495, this.chosenWeapon.type).setOrigin(0, 0).setScrollFactor(0);
+    }
+}
+
 
     checkIntersectionWithEnemies() {
         // Получение положения камеры
