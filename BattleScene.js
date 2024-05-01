@@ -26,34 +26,240 @@ export default class BattleScene extends Phaser.Scene {
             { name: 'Minigun', skill: 'big_guns', type: 'mm_5_45', cooldown: 6000, damage: { min: 7, max: 11 }, clip: 40, shots: 40 },
         ];
 
+        const leather_jacket = { health: 30, ac: 8, threshold: 0, resistance: 0.2 }
+        const leather_armor = { health: 30, ac: 15, threshold: 2, resistance: 0.25 }
+        const metal_armor = { health: 30, ac: 10, threshold: 4, resistance: 0.3 }
+
         this.enemies_all = [
             {
-                maxLevel: 1, name: 'Rat', type: 'creature',
-                defence: { health: 6, ac: 6, threshold: 0, resistance: 0 },
-                attack: { hit_chance: 40, damage: { min: 2, max: 2 }, shots: 1 },
-                amount: { min: 6, max: 10 }, experience: 25, title: ['Rat']
+                maxLevel: 1, 
+                name: 'Rat', 
+                type: 'creature',
+                amount: { min: 6, max: 10 }, 
+                experience: 25, 
+                members: [
+                    {
+                        title: 'Rat',
+                        defence: { health: 6, ac: 6, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 40, damage: { min: 2, max: 2 }, shots: 1 },
+                    }
+                ]
             },
             {
-                maxLevel: 1, name: 'Mantis', type: 'creature',
-                defence: { health: 25, ac: 13, threshold: 0, resistance: 0.2 },
-                attack: { hit_chance: 50, damage: { min: 5, max: 8 }, shots: 1 },
-                amount: { min: 1, max: 4 }, experience: 50, title: ['Mantis']
+                maxLevel: 1, 
+                name: 'Mantis', 
+                type: 'creature',
+                amount: { min: 1, max: 4 }, 
+                experience: 50,
+                members: [
+                    {
+                        title: 'Mantis',
+                        defence: { health: 25, ac: 13, threshold: 0, resistance: 0.2 },
+                        attack: { hit_chance: 50, damage: { min: 5, max: 8 }, shots: 1 },
+                    }
+                ] 
             },
             {
-                maxLevel: 1, name: 'Tribe', type: 'human',
-                defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
-                amount: { min: 2, max: 4 }, experience: 50,
-                title: ['Tribe man 1', 'Tribe man 2', 'Tribe man 3', 'Tribe man 4',
-                    'Tribe woman 1', 'Tribe woman 2']
+                maxLevel: 1, 
+                name: 'Tribe', 
+                type: 'human',
+                amount: { min: 2, max: 4 }, 
+                experience: 50,
+                members: [
+                    {
+                        title: 'Tribe man 1',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Tribe man 2',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Tribe man 3',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Tribe man 4',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Tribe woman 1',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Tribe woman 2',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                    }
+                ]
             },
             {
-                maxLevel: 1, name: 'Cannibals', type: 'human',
-                defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
-                amount: { min: 2, max: 4 }, experience: 50,
-                title: ['Cannibal man 1', 'Cannibal man 2', 'Cannibal man 3',
-                    'Cannibal woman 1', 'Cannibal woman 2']
+                maxLevel: 1, 
+                name: 'Cannibals', 
+                type: 'human',
+                amount: { min: 2, max: 4 }, 
+                experience: 50,
+                members: [
+                    {
+                        title: 'Cannibal man 1',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                    },
+                    {
+                        title: 'Cannibal man 2',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                    },
+                    {
+                        title: 'Cannibal man 3',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                    },
+                    {
+                        title: 'Cannibal woman 1',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                    },
+                    {
+                        title: 'Cannibal woman 2',
+                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                    },
+                ]
+            },
+            {
+                maxLevel: 1, 
+                name: 'Raiders', 
+                type: 'human',
+                amount: { min: 2, max: 4 }, 
+                experience: 50,
+                members: [
+                    {
+                        title: 'Raider - Leather Jacket - Baseball bat',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - 44 Magnum revolver',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 24, max: 36 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - 9mm pistol',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 10, max: 24 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - 44 Desert Eagle',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: '44 Desert Eagle', damage: { min: 20, max: 32 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - Laser pistol',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 10, max: 22 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - Combat shotgun',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun bat', damage: { min: 15, max: 25 }, shots: 3 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - Frag grenade',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'Frag grenade', damage: { min: 20, max: 35 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - Laser rifle',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'Laser rifle', damage: { min: 25, max: 50 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - Minigun',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'Minigun', damage: { min: 7, max: 11 }, shots: 40 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - SMG',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 5, max: 12 }, shots: 10 },
+                    },
+                    {
+                        title: 'Raider - Leather Armor - Baseball bat',
+                        defence: leather_armor,
+                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Armor - 44 Magnum revolver',
+                        defence: leather_armor,
+                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 24, max: 36 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Armor - 9mm pistol',
+                        defence: leather_armor,
+                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 10, max: 24 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Armor - 44 Desert Eagle',
+                        defence: leather_armor,
+                        attack: { hit_chance: 60, weapon: '44 Desert Eagle', damage: { min: 20, max: 32 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Armor - Laser pistol',
+                        defence: leather_armor,
+                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 10, max: 22 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Armor - Combat shotgun',
+                        defence: leather_armor,
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun bat', damage: { min: 15, max: 25 }, shots: 3 },
+                    },
+                    {
+                        title: 'Raider - Leather Armor - SMG',
+                        defence: leather_armor,
+                        attack: { hit_chance: 60, weapon: 'Frag grenade', damage: { min: 5, max: 12 }, shots: 10 },
+                    },
+                    {
+                        title: 'Raider - Metal Armor - Baseball bat',
+                        defence: metal_armor,
+                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 3, max: 10 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Metal Armor - 44 Magnum revolver',
+                        defence: metal_armor,
+                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 24, max: 36 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Metal Armor - 9mm pistol',
+                        defence: metal_armor,
+                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 10, max: 24 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Metal Armor - 44 Desert Eagle',
+                        defence: metal_armor,
+                        attack: { hit_chance: 60, weapon: '44 Desert Eagle', damage: { min: 20, max: 32 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Metal Armor - Laser pistol',
+                        defence: metal_armor,
+                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 10, max: 22 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Metal Armor - Combat shotgun',
+                        defence: metal_armor,
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun bat', damage: { min: 15, max: 25 }, shots: 3 },
+                    },
+                    {
+                        title: 'Raider - Metal Armor - SMG',
+                        defence: metal_armor,
+                        attack: { hit_chance: 60, weapon: 'Frag grenade', damage: { min: 5, max: 12 }, shots: 10 },
+                    },
+                ]
             },
         ]
 
@@ -109,8 +315,9 @@ export default class BattleScene extends Phaser.Scene {
         this.load.image('Raider - Metal Armor - SMG', 'assets/images/enemies/Raider - Metal Armor - SMG.png');
 
         this.enemies_all.forEach(enemy => {
-            enemy.title.forEach(title => {
-                this.load.image(title, `assets/images/enemies/${title}.png`);
+            enemy.members.forEach(member => {
+                console.log(member.title)
+                this.load.image(member.title, `assets/images/enemies/${member.title}.png`);
             });
         });
 
@@ -152,31 +359,24 @@ export default class BattleScene extends Phaser.Scene {
         this.load.audio('Mantis - attack', 'assets/sounds/enemies/Mantis - attack.mp3');
         this.load.audio('Mantis - wounded', 'assets/sounds/enemies/Mantis - wounded.mp3');
         this.load.audio('Mantis - died', 'assets/sounds/enemies/Mantis - died.mp3');
+        
         this.load.audio('Spear - attack', 'assets/sounds/enemies/Spear - attack.mp3');
         this.load.audio('Knife - attack', 'assets/sounds/enemies/Knife - attack.mp3');
+        this.load.audio('Baseball bat - attack', 'assets/sounds/enemies/Baseball bat - attack.mp3');
+        this.load.audio('44 Magnum revolver - attack', 'assets/sounds/enemies/44 Magnum revolver - attack.mp3');
+        this.load.audio('9mm pistol - attack', 'assets/sounds/enemies/9mm pistol - attack.mp3');
+        this.load.audio('44 Desert Eagle - attack', 'assets/sounds/enemies/44 Desert Eagle - attack.mp3');
+        this.load.audio('Laser pistol - attack', 'assets/sounds/enemies/Laser pistol - attack.mp3');
+        this.load.audio('SMG - attack', 'assets/sounds/enemies/SMG - attack.mp3');
+        this.load.audio('Frag grenade - attack', 'assets/sounds/enemies/Frag grenade - attack.mp3');
+        this.load.audio('Combat shotgun - attack', 'assets/sounds/enemies/Combat shotgun - attack.mp3');
+        this.load.audio('Laser rifle - attack', 'assets/sounds/enemies/Laser rifle - attack.mp3');
+        this.load.audio('Minigun - attack', 'assets/sounds/enemies/Minigun - attack.mp3');
 
-        this.load.audio('Tribe man 1 - wounded', 'assets/sounds/enemies/Tribe man 1 - wounded.mp3');
-        this.load.audio('Tribe man 2 - wounded', 'assets/sounds/enemies/Tribe man 2 - wounded.mp3');
-        this.load.audio('Tribe man 3 - wounded', 'assets/sounds/enemies/Tribe man 3 - wounded.mp3');
-        this.load.audio('Tribe man 4 - wounded', 'assets/sounds/enemies/Tribe man 4 - wounded.mp3');
-        this.load.audio('Tribe man 1 - died', 'assets/sounds/enemies/Tribe man 1 - died.mp3');
-        this.load.audio('Tribe man 2 - died', 'assets/sounds/enemies/Tribe man 2 - died.mp3');
-        this.load.audio('Tribe man 3 - died', 'assets/sounds/enemies/Tribe man 3 - died.mp3');
-        this.load.audio('Tribe man 4 - died', 'assets/sounds/enemies/Tribe man 4 - died.mp3');
-        this.load.audio('Tribe woman 1 - wounded', 'assets/sounds/enemies/Tribe woman 1 - wounded.mp3');
-        this.load.audio('Tribe woman 2 - wounded', 'assets/sounds/enemies/Tribe woman 2 - wounded.mp3');
-        this.load.audio('Tribe woman 1 - died', 'assets/sounds/enemies/Tribe woman 1 - died.mp3');
-        this.load.audio('Tribe woman 2 - died', 'assets/sounds/enemies/Tribe woman 2 - died.mp3');
-        this.load.audio('Cannibal man 1 - wounded', 'assets/sounds/enemies/Cannibal man 1 - wounded.mp3');
-        this.load.audio('Cannibal man 2 - wounded', 'assets/sounds/enemies/Cannibal man 2 - wounded.mp3');
-        this.load.audio('Cannibal man 3 - wounded', 'assets/sounds/enemies/Cannibal man 3 - wounded.mp3');
-        this.load.audio('Cannibal man 1 - died', 'assets/sounds/enemies/Cannibal man 1 - died.mp3');
-        this.load.audio('Cannibal man 2 - died', 'assets/sounds/enemies/Cannibal man 2 - died.mp3');
-        this.load.audio('Cannibal man 3 - died', 'assets/sounds/enemies/Cannibal man 3 - died.mp3');
-        this.load.audio('Cannibal woman 1 - wounded', 'assets/sounds/enemies/Cannibal woman 1 - wounded.mp3');
-        this.load.audio('Cannibal woman 2 - wounded', 'assets/sounds/enemies/Cannibal woman 2 - wounded.mp3');
-        this.load.audio('Cannibal woman 1 - died', 'assets/sounds/enemies/Cannibal woman 1 - died.mp3');
-        this.load.audio('Cannibal woman 2 - died', 'assets/sounds/enemies/Cannibal woman 2 - died.mp3');
+        this.load.audio('man - wounded', 'assets/sounds/enemies/man - wounded.mp3');
+        this.load.audio('man - died', 'assets/sounds/enemies/man - died.mp3');
+        this.load.audio('woman - wounded', 'assets/sounds/enemies/woman - wounded.mp3');
+        this.load.audio('woman - died', 'assets/sounds/enemies/woman - died.mp3');
 
         this.soundtrackNames.forEach(name => {
             this.load.audio(name, 'assets/sounds/battle_background/' + name + '.mp3');
@@ -297,16 +497,21 @@ export default class BattleScene extends Phaser.Scene {
         const randomEnemy = this.enemies_all[Math.floor(Math.random() * this.enemies_all.length)];
         // Determine the random amount of enemies to generate
         const enemyCount = Math.floor(Math.random() * (randomEnemy.amount.max - randomEnemy.amount.min + 1)) + randomEnemy.amount.min;
-        // Create an array of random enemy names
-        const enemyNames = [];
+        // Create an array of random enemy configurations
+        const enemyConfigs = [];
         for (let i = 0; i < enemyCount; i++) {
-            const randomName = randomEnemy.title[Math.floor(Math.random() * randomEnemy.title.length)];
-            enemyNames.push(randomName);
-        }
-        let enemiesConfig = enemyNames;
+            // Assuming randomEnemy.members contains the detailed configurations including title, attack, and defence
+            const randomMemberIndex = Math.floor(Math.random() * randomEnemy.members.length);
+            const randomMember = randomEnemy.members[randomMemberIndex];
 
-        enemiesConfig.forEach(name => {
-            let enemy = this.createEnemy(name);
+            // Clone the member object to avoid modifications to the original data
+            const enemyConfig = Object.assign({}, randomMember);
+            enemyConfigs.push(enemyConfig);
+        }
+
+        // Use the configured enemies
+        enemyConfigs.forEach(enemyConfig => {
+            let enemy = this.createEnemy(enemyConfig);
             this.enemies.push(enemy);
         });
 
@@ -478,7 +683,13 @@ export default class BattleScene extends Phaser.Scene {
         let toRemove = [];
         this.enemies.forEach((enemy, index) => {
             if (enemy.defence.health <= 0) {
-                this.sound.add(`${enemy.name} - died`).play()
+                if (enemy.name.includes("woman")) {
+                    this.sound.add('woman - died').play()
+                } else if (enemy.name.includes("man") || enemy.name.includes("Raider")) {
+                    this.sound.add('man - died').play()
+                } else {
+                    this.sound.add(`${enemy.name} - died`).play()
+                }
                 this.gameData.experience += enemy.experience
                 enemy.healthIndicator.destroy();
                 enemy.destroy();
@@ -879,55 +1090,53 @@ export default class BattleScene extends Phaser.Scene {
         });
     }
 
-    createEnemy(enemy_name) {
+    createEnemy(enemyConfig) {
         let xPosition = Phaser.Math.Between(512, 1536);
-        let speed = Phaser.Math.Between(2000, 3000); // Продолжительность анимации
+        let speed = Phaser.Math.Between(2000, 3000); // Duration of the animation
         let direction = Math.random() > 0.5 ? 1 : -1;
         let moveThreshold = Phaser.Math.Between(200, 600);
-
-        //const enemy_obj = this.enemies_all.find(enemy => enemy.name === enemy_name);
-        const enemy_obj = this.enemies_all.find(enemy => enemy.title.includes(enemy_name));
-        const unique_enemy_obj = JSON.parse(JSON.stringify(enemy_obj));
-
+    
         let startPosition = Phaser.Math.Clamp(xPosition, 512, 1536);
-        let enemy = this.add.image(startPosition, 330, enemy_name);
-
-        enemy.name = enemy_name
-        //enemy.title = unique_enemy_obj.title
-        enemy.defence = {}
-        enemy.defence.maxHealth = unique_enemy_obj.defence.health;
-        enemy.defence.health = unique_enemy_obj.defence.health;
-        enemy.defence.ac = unique_enemy_obj.defence.ac;
-        enemy.defence.threshold = unique_enemy_obj.defence.threshold;
-        enemy.defence.resistance = unique_enemy_obj.defence.resistance;
-        enemy.healthIndicator = this.add.sprite(xPosition, 280, 'indicator green'); // Предполагается, что начальное здоровье - 100%
-        enemy.attack = {}
-        enemy.attack.hit_chance = unique_enemy_obj.attack.hit_chance
-        enemy.attack.weapon = unique_enemy_obj.attack.weapon
-        enemy.attack.damage = {}
-        enemy.attack.damage.min = unique_enemy_obj.attack.damage.min
-        enemy.attack.damage.max = unique_enemy_obj.attack.damage.max
-        enemy.attack.shots = unique_enemy_obj.attack.shots
-        enemy.experience = unique_enemy_obj.experience
+        let enemy = this.add.image(startPosition, 330, enemyConfig.title);
+    
+        // Assigning detailed attributes to the enemy
+        enemy.name = enemyConfig.title;
+        enemy.defence = {
+            maxHealth: enemyConfig.defence.health,
+            health: enemyConfig.defence.health,
+            ac: enemyConfig.defence.ac,
+            threshold: enemyConfig.defence.threshold,
+            resistance: enemyConfig.defence.resistance
+        };
+        enemy.healthIndicator = this.add.sprite(xPosition, 280, 'indicator green'); // Assuming initial health is 100%
+        enemy.attack = {
+            hit_chance: enemyConfig.attack.hit_chance,
+            weapon: enemyConfig.attack.weapon,
+            damage: {
+                min: enemyConfig.attack.damage.min,
+                max: enemyConfig.attack.damage.max
+            },
+            shots: enemyConfig.attack.shots
+        };
+        enemy.experience = enemyConfig.experience;
         enemy.speed = speed;
         enemy.direction = direction;
         enemy.moveThreshold = moveThreshold;
-
-        // Определите границы движения врага
-        let minBound = 512;
-        let maxBound = 1536;
-        // Функция для запуска Tween анимации
+    
+        // Define enemy movement bounds
+        const minBound = 512, maxBound = 1536;
+    
+        // Function to initiate the tween animation
         const startTween = () => {
-            enemy.isMoving = true; // Враг начинает движение
-            // Рассчитайте конечную позицию с учетом границ
+            enemy.isMoving = true; // Enemy begins moving
+            // Calculate the target position considering bounds
             let targetX = enemy.x + (direction * moveThreshold);
             targetX = Phaser.Math.Clamp(targetX, minBound, maxBound);
-
+    
             if (!enemy.rectangle) {
                 enemy.rectangle = new Phaser.Geom.Rectangle(enemy.x - enemy.displayWidth / 2, enemy.y - enemy.displayHeight / 2, enemy.displayWidth, enemy.displayHeight);
             }
-
-            // Функция для запуска анимации в одном направлении
+    
             const tweenToTarget = () => {
                 this.tweens.add({
                     targets: enemy,
@@ -935,14 +1144,12 @@ export default class BattleScene extends Phaser.Scene {
                     ease: 'Linear',
                     duration: enemy.speed,
                     onComplete: () => {
-                        enemy.isMoving = false; // Враг остановился
-                        // После завершения, задержка и запуск анимации обратно
-                        this.time.delayedCall(1000, tweenToStart); // 1000 миллисекунд задержки
+                        enemy.isMoving = false; // Enemy has stopped
+                        this.time.delayedCall(1000, tweenToStart); // 1000 ms delay
                     }
                 });
             };
-
-            // Функция для возвращения в исходное положение
+    
             const tweenToStart = () => {
                 this.tweens.add({
                     targets: enemy,
@@ -950,19 +1157,18 @@ export default class BattleScene extends Phaser.Scene {
                     ease: 'Linear',
                     duration: enemy.speed,
                     onComplete: () => {
-                        // Смена направления после завершения анимации
                         enemy.direction *= -1;
-                        this.time.delayedCall(1000, tweenToTarget); // 1000 миллисекунд задержки
+                        this.time.delayedCall(1000, tweenToTarget); // 1000 ms delay
                     }
                 });
             };
-
-            tweenToTarget(); // Начать с анимации к конечной точке
+    
+            tweenToTarget(); // Start with the animation towards the target
         };
         startTween();
-
+    
         this.setAttackTimer(enemy);
-
+    
         return enemy;
     }
 
@@ -1107,7 +1313,14 @@ export default class BattleScene extends Phaser.Scene {
                             enemy_to_hit.defence.health -= Math.round(totalDamage); // Уменьшение здоровья врага
                             this.sound.play(this.chosenWeapon.name + ' - hit');
                             if (enemy_to_hit.defence.health > 0) {
-                                this.sound.play(enemy_to_hit.name + ' - wounded');
+                                //this.sound.play(enemy_to_hit.name + ' - wounded');
+                                if (enemy_to_hit.name.includes("woman")) {
+                                    this.sound.add('woman - wounded').play()
+                                } else if (enemy_to_hit.name.includes("man") || enemy_to_hit.name.includes("Raider")) {
+                                    this.sound.add('man - wounded').play()
+                                } else {
+                                    this.sound.add(`${enemy_to_hit.name} - wounded`).play()
+                                }
                             }
                         }
                     } else {
