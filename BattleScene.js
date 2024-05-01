@@ -20,8 +20,8 @@ export default class BattleScene extends Phaser.Scene {
             { name: 'Laser pistol', skill: 'energy_weapons', type: 'energy_cell', cooldown: 6000, damage: { min: 7, max: 7 }, clip: 12, shots: 1 },
             { name: 'Frag grenade', skill: 'pyrotechnics', type: 'frag_grenade', cooldown: 4000, damage: { min: 8, max: 12 }, clip: 1, shots: 1 },
             { name: 'Laser rifle', skill: 'energy_weapons', type: 'energy_cell', cooldown: 5000, damage: { min: 9, max: 9 }, clip: 12, shots: 1 },
-            { name: 'Combat shotgun', skill: 'small_guns', type: 'mm_12', cooldown: 6000, damage: { min: 7, max: 10 }, clip: 12, shots: 3 },
-            { name: 'SMG', type: 'mm_9', skill: 'small_guns', cooldown: 6000, damage: { min: 8, max: 12 }, clip: 30, shots: 10 },
+            { name: 'Combat shotgun', skill: 'small_guns', type: 'mm_12', cooldown: 6000, damage: { min: 7, max: 10 }, clip: 12, shots: 1 },
+            { name: 'SMG', type: 'mm_9', skill: 'small_guns', cooldown: 6000, damage: { min: 8, max: 12 }, clip: 30, shots: 1 },
             { name: 'Minigun', skill: 'big_guns', type: 'mm_5_45', cooldown: 6000, damage: { min: 15, max: 20 }, clip: 40, shots: 40 },
         ];
 
@@ -172,7 +172,7 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Raider - Leather Jacket - Combat shotgun',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Jacket - SMG',
@@ -202,7 +202,7 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Raider - Leather Armor - Combat shotgun',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Armor - SMG',
@@ -232,7 +232,7 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Raider - Metal Armor - Combat shotgun',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Metal Armor - SMG',
