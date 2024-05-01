@@ -136,7 +136,7 @@ export default class BattleScene extends Phaser.Scene {
                 maxLevel: 1, 
                 name: 'Raiders', 
                 type: 'human',
-                amount: { min: 2, max: 4 }, 
+                amount: { min: 1, max: 1 }, 
                 experience: 50,
                 members: [
                     {
@@ -685,6 +685,33 @@ export default class BattleScene extends Phaser.Scene {
                     this.sound.add(`${enemy.name} - died`).play()
                 }
                 this.gameData.experience += enemy.experience
+                if (enemy.attack.weapon == 'Baseball bat') {
+                    this.gameData.levelLoot.push(0);
+                }
+                if (enemy.attack.weapon == 'Laser pistol') {
+                    this.gameData.levelLoot.push(1);
+                }
+                if (enemy.attack.weapon == '9mm pistol') {
+                    this.gameData.levelLoot.push(2);
+                }
+                if (enemy.attack.weapon == '44 Desert Eagle') {
+                    this.gameData.levelLoot.push(3);
+                }
+                if (enemy.attack.weapon == 'Frag grenade') {
+                    this.gameData.levelLoot.push(4);
+                }
+                if (enemy.attack.weapon == '44 Magnum revolver') {
+                    this.gameData.levelLoot.push(5);
+                }
+                if (enemy.attack.weapon == 'Laser rifle') {
+                    this.gameData.levelLoot.push(6);
+                }
+                if (enemy.attack.weapon == 'Combat shotgun') {
+                    this.gameData.levelLoot.push(7);
+                }
+                if (enemy.attack.weapon == 'SMG') {
+                    this.gameData.levelLoot.push(8);
+                }
                 enemy.healthIndicator.destroy();
                 enemy.destroy();
                 toRemove.push(index);
@@ -726,19 +753,19 @@ export default class BattleScene extends Phaser.Scene {
                 weapons: ['Baseball bat', '44 Magnum revolver', '9mm pistol', '44 Desert Eagle', 'Laser pistol',
                             'SMG', 'Frag grenade', 'Combat shotgun', 'Laser rifle', 'Minigun'],
                 med: {
-                    first_aid_kit: 50,
-                    jet: 50,
-                    buffout: 50,
-                    mentats: 50,
-                    psycho: 50
+                    first_aid_kit: 5,
+                    jet: 0,
+                    buffout: 0,
+                    mentats: 0,
+                    psycho: 0
                 },
                 ammo: {
-                    mm_9: 500,
-                    magnum_44: 500,
-                    mm_12: 500,
-                    mm_5_45: 500,
-                    energy_cell: 500,
-                    frag_grenade: 500
+                    mm_9: 12,
+                    magnum_44: 0,
+                    mm_12: 0,
+                    mm_5_45: 0,
+                    energy_cell: 0,
+                    frag_grenade: 0
                 },
                 levelLoot: [],
                 markerPosition: { x: 25, y: 25 }

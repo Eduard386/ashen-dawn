@@ -33,19 +33,19 @@ export default class MainMenu extends Phaser.Scene {
                 weapons: ['Baseball bat', '44 Magnum revolver', '9mm pistol', '44 Desert Eagle', 'Laser pistol',
                             'SMG', 'Frag grenade', 'Combat shotgun', 'Laser rifle', 'Minigun'],
                 med: {
-                    first_aid_kit: 50,
-                    jet: 50,
-                    buffout: 50,
-                    mentats: 50,
-                    psycho: 50
+                    first_aid_kit: 5,
+                    jet: 0,
+                    buffout: 0,
+                    mentats: 0,
+                    psycho: 0
                 },
                 ammo: {
-                    mm_9: 500,
-                    magnum_44: 500,
-                    mm_12: 500,
-                    mm_5_45: 500,
-                    energy_cell: 500,
-                    frag_grenade: 500
+                    mm_9: 12,
+                    magnum_44: 0,
+                    mm_12: 0,
+                    mm_5_45: 0,
+                    energy_cell: 0,
+                    frag_grenade: 0
                 },
                 levelLoot: [],
                 markerPosition: { x: 25, y: 25 }
