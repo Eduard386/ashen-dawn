@@ -7,13 +7,12 @@ export default class VictoryScene extends Phaser.Scene {
             0: { ammoType: 'melee', amount: 0 },
             1: { ammoType: 'energy_cell', amount: Phaser.Math.Between(2, 6) },
             2: { ammoType: 'mm_9', amount: Phaser.Math.Between(4, 8) },
-            3: { ammoType: 'magnum_44', amount: Phaser.Math.Between(2, 6) },
-            4: { ammoType: 'frag_grenade', amount: Phaser.Math.Between(3, 5) },
-            5: { ammoType: 'magnum_44', amount: Phaser.Math.Between(2, 6) },
-            6: { ammoType: 'energy_cell', amount: Phaser.Math.Between(2, 6) },
-            7: { ammoType: 'mm_12', amount: Phaser.Math.Between(6, 12) },
-            8: { ammoType: 'mm_9', amount: Phaser.Math.Between(10, 30) },
-            9: { ammoType: 'mm_5_45', amount: Phaser.Math.Between(80, 160) }
+            3: { ammoType: 'frag_grenade', amount: Phaser.Math.Between(3, 5) },
+            4: { ammoType: 'magnum_44', amount: Phaser.Math.Between(2, 6) },
+            5: { ammoType: 'energy_cell', amount: Phaser.Math.Between(2, 6) },
+            6: { ammoType: 'mm_12', amount: Phaser.Math.Between(6, 12) },
+            7: { ammoType: 'mm_9', amount: Phaser.Math.Between(10, 30) },
+            8: { ammoType: 'mm_5_45', amount: Phaser.Math.Between(80, 160) }
         };
 
     }

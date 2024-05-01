@@ -7,28 +7,28 @@ export default class BattleScene extends Phaser.Scene {
             'My Chrysalis Highwayman (Worldmap with Car)']; // Замените на реальные названия треков
         this.amountOfMainBackgrounds = 3;
         this.armors = [
-            { name: 'Leather Jacket', ac: 8, threshold: 0, resistance: 0.2 },
-            { name: 'Leather Armor', ac: 15, threshold: 2, resistance: 0.25 },
-            { name: 'Metal Armor', ac: 10, threshold: 4, resistance: 0.3 },
-            { name: 'Combat Armor', ac: 20, threshold: 5, resistance: 0.4 },
-            { name: 'Power Armor', ac: 25, threshold: 12, resistance: 0.4 },
+            { name: 'Leather Jacket', ac: 8, threshold: 1, resistance: 0 },
+            { name: 'Leather Armor', ac: 15, threshold: 2, resistance: 0 },
+            { name: 'Metal Armor', ac: 10, threshold: 3, resistance: 0 },
+            { name: 'Combat Armor', ac: 20, threshold: 4, resistance: 0 },
+            { name: 'Power Armor', ac: 25, threshold: 5, resistance: 0 },
         ];
         this.weapons = [
-            { name: 'Baseball bat', skill: 'melee_weapons', type: 'melee', cooldown: 3000, damage: { min: 3, max: 10 }, clip: 1000, shots: 1 },
-            { name: 'Laser pistol', skill: 'energy_weapons', type: 'energy_cell', cooldown: 6000, damage: { min: 10, max: 22 }, clip: 12, shots: 1 },
-            { name: '9mm pistol', skill: 'small_guns', type: 'mm_9', cooldown: 5000, damage: { min: 10, max: 24 }, clip: 12, shots: 1 },
-            { name: '44 Desert Eagle', skill: 'small_guns', type: 'magnum_44', cooldown: 5000, damage: { min: 20, max: 32 }, clip: 8, shots: 1 },
-            { name: 'Frag grenade', skill: 'pyrotechnics', type: 'frag_grenade', cooldown: 4000, damage: { min: 20, max: 35 }, clip: 1, shots: 1 },
-            { name: '44 Magnum revolver', skill: 'small_guns', type: 'magnum_44', cooldown: 4000, damage: { min: 24, max: 36 }, clip: 6, shots: 1 },
-            { name: 'Laser rifle', skill: 'energy_weapons', type: 'energy_cell', cooldown: 5000, damage: { min: 25, max: 50 }, clip: 12, shots: 1 },
-            { name: 'Combat shotgun', skill: 'small_guns', type: 'mm_12', cooldown: 6000, damage: { min: 15, max: 25 }, clip: 12, shots: 3 },
-            { name: 'SMG', type: 'mm_9', skill: 'small_guns', cooldown: 6000, damage: { min: 5, max: 12 }, clip: 30, shots: 10 },
-            { name: 'Minigun', skill: 'big_guns', type: 'mm_5_45', cooldown: 6000, damage: { min: 7, max: 11 }, clip: 40, shots: 40 },
+            { name: 'Baseball bat', skill: 'melee_weapons', type: 'melee', cooldown: 3000, damage: { min: 4, max: 4 }, clip: 1000, shots: 1 },
+            { name: '9mm pistol', skill: 'small_guns', type: 'mm_9', cooldown: 5000, damage: { min: 5, max: 5 }, clip: 12, shots: 1 },
+            { name: '44 Magnum revolver', skill: 'small_guns', type: 'magnum_44', cooldown: 4000, damage: { min: 6, max: 6 }, clip: 6, shots: 1 },
+            { name: 'Laser pistol', skill: 'energy_weapons', type: 'energy_cell', cooldown: 6000, damage: { min: 7, max: 7 }, clip: 12, shots: 1 },
+            { name: 'Frag grenade', skill: 'pyrotechnics', type: 'frag_grenade', cooldown: 4000, damage: { min: 8, max: 12 }, clip: 1, shots: 1 },
+            { name: 'Laser rifle', skill: 'energy_weapons', type: 'energy_cell', cooldown: 5000, damage: { min: 9, max: 9 }, clip: 12, shots: 1 },
+            { name: 'Combat shotgun', skill: 'small_guns', type: 'mm_12', cooldown: 6000, damage: { min: 7, max: 10 }, clip: 12, shots: 3 },
+            { name: 'SMG', type: 'mm_9', skill: 'small_guns', cooldown: 6000, damage: { min: 8, max: 12 }, clip: 30, shots: 10 },
+            { name: 'Minigun', skill: 'big_guns', type: 'mm_5_45', cooldown: 6000, damage: { min: 15, max: 20 }, clip: 40, shots: 40 },
         ];
 
-        const leather_jacket = { health: 30, ac: 8, threshold: 0, resistance: 0.2 }
-        const leather_armor = { health: 30, ac: 15, threshold: 2, resistance: 0.25 }
-        const metal_armor = { health: 30, ac: 10, threshold: 4, resistance: 0.3 }
+        const no_armor = { health: 15, ac: 5, threshold: 0, resistance: 0 }
+        const leather_jacket = { health: 15, ac: 8, threshold: 1, resistance: 0 }
+        const leather_armor = { health: 15, ac: 15, threshold: 2, resistance: 0 }
+        const metal_armor = { health: 15, ac: 10, threshold: 3, resistance: 0 }
 
         this.enemies_all = [
             {
@@ -41,7 +41,7 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Rat',
                         defence: { health: 6, ac: 6, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 40, damage: { min: 2, max: 2 }, shots: 1 },
+                        attack: { hit_chance: 40, damage: { min: 1, max: 3 }, shots: 1 },
                     }
                 ]
             },
@@ -54,8 +54,8 @@ export default class BattleScene extends Phaser.Scene {
                 members: [
                     {
                         title: 'Mantis',
-                        defence: { health: 25, ac: 13, threshold: 0, resistance: 0.2 },
-                        attack: { hit_chance: 50, damage: { min: 5, max: 8 }, shots: 1 },
+                        defence: { health: 10, ac: 13, threshold: 0, resistance: 0 },
+                        attack: { hit_chance: 50, damage: { min: 3, max: 6 }, shots: 1 },
                     }
                 ] 
             },
@@ -68,33 +68,33 @@ export default class BattleScene extends Phaser.Scene {
                 members: [
                     {
                         title: 'Tribe man 1',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Tribe man 2',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Tribe man 3',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Tribe man 4',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Tribe woman 1',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Tribe woman 2',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 3, max: 10 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Spear', damage: { min: 4, max: 4 }, shots: 1 },
                     }
                 ]
             },
@@ -107,28 +107,28 @@ export default class BattleScene extends Phaser.Scene {
                 members: [
                     {
                         title: 'Cannibal man 1',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal man 2',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal man 3',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal woman 1',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
                     },
                     {
                         title: 'Cannibal woman 2',
-                        defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
-                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 1, max: 6 }, shots: 1 },
+                        defence: no_armor,
+                        attack: { hit_chance: 60, weapon: 'Knife', damage: { min: 3, max: 3 }, shots: 1 },
                     },
                 ]
             },
@@ -142,117 +142,102 @@ export default class BattleScene extends Phaser.Scene {
                     {
                         title: 'Raider - Leather Jacket - Baseball bat',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 3, max: 10 }, shots: 1 },
-                    },
-                    {
-                        title: 'Raider - Leather Jacket - 44 Magnum revolver',
-                        defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 24, max: 36 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Jacket - 9mm pistol',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 10, max: 24 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 5, max: 5 }, shots: 1 },
                     },
                     {
-                        title: 'Raider - Leather Jacket - 44 Desert Eagle',
+                        title: 'Raider - Leather Jacket - 44 Magnum revolver',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: '44 Desert Eagle', damage: { min: 20, max: 32 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 6, max: 6 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Jacket - Laser pistol',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 10, max: 22 }, shots: 1 },
-                    },
-                    {
-                        title: 'Raider - Leather Jacket - Combat shotgun',
-                        defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 15, max: 25 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 7, max: 7 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Jacket - Frag grenade',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Frag grenade', damage: { min: 20, max: 35 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Frag grenade', damage: { min: 8, max: 12 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Jacket - Laser rifle',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'Laser rifle', damage: { min: 25, max: 50 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Laser rifle', damage: { min: 9, max: 9 }, shots: 1 },
+                    },
+                    {
+                        title: 'Raider - Leather Jacket - Combat shotgun',
+                        defence: leather_jacket,
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 3 },
                     },
                     {
                         title: 'Raider - Leather Jacket - SMG',
                         defence: leather_jacket,
-                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 5, max: 12 }, shots: 10 },
+                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 8, max: 12 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Armor - Baseball bat',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 3, max: 10 }, shots: 1 },
-                    },
-                    {
-                        title: 'Raider - Leather Armor - 44 Magnum revolver',
-                        defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 24, max: 36 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Armor - 9mm pistol',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 10, max: 24 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 5, max: 5 }, shots: 1 },
                     },
                     {
-                        title: 'Raider - Leather Armor - 44 Desert Eagle',
+                        title: 'Raider - Leather Armor - 44 Magnum revolver',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: '44 Desert Eagle', damage: { min: 20, max: 32 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 6, max: 6 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Armor - Laser pistol',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 10, max: 22 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 7, max: 7 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Leather Armor - Combat shotgun',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 15, max: 25 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 3 },
                     },
                     {
                         title: 'Raider - Leather Armor - SMG',
                         defence: leather_armor,
-                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 5, max: 12 }, shots: 10 },
+                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 8, max: 12 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Metal Armor - Baseball bat',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 3, max: 10 }, shots: 1 },
-                    },
-                    {
-                        title: 'Raider - Metal Armor - 44 Magnum revolver',
-                        defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 24, max: 36 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Baseball bat', damage: { min: 4, max: 4 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Metal Armor - 9mm pistol',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 10, max: 24 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: '9mm pistol', damage: { min: 5, max: 5 }, shots: 1 },
                     },
                     {
-                        title: 'Raider - Metal Armor - 44 Desert Eagle',
+                        title: 'Raider - Metal Armor - 44 Magnum revolver',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: '44 Desert Eagle', damage: { min: 20, max: 32 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: '44 Magnum revolver', damage: { min: 6, max: 6 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Metal Armor - Laser pistol',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 10, max: 22 }, shots: 1 },
+                        attack: { hit_chance: 60, weapon: 'Laser pistol', damage: { min: 7, max: 7 }, shots: 1 },
                     },
                     {
                         title: 'Raider - Metal Armor - Combat shotgun',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 15, max: 25 }, shots: 3 },
+                        attack: { hit_chance: 60, weapon: 'Combat shotgun', damage: { min: 7, max: 10 }, shots: 3 },
                     },
                     {
                         title: 'Raider - Metal Armor - SMG',
                         defence: metal_armor,
-                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 5, max: 12 }, shots: 10 },
+                        attack: { hit_chance: 60, weapon: 'SMG', damage: { min: 8, max: 12 }, shots: 1 },
                     },
                 ]
             },
@@ -289,7 +274,6 @@ export default class BattleScene extends Phaser.Scene {
         this.load.image('Raider - Leather Jacket - Baseball bat', 'assets/images/enemies/Raider - Leather Jacket - Baseball bat.png');
         this.load.image('Raider - Leather Jacket - 44 Magnum revolver', 'assets/images/enemies/Raider - Leather Jacket - 44 Magnum revolver.png');
         this.load.image('Raider - Leather Jacket - 9mm pistol', 'assets/images/enemies/Raider - Leather Jacket - 44 Magnum revolver.png');
-        this.load.image('Raider - Leather Jacket - 44 Desert Eagle', 'assets/images/enemies/Raider - Leather Jacket - 44 Desert Eagle.png');
         this.load.image('Raider - Leather Jacket - Laser pistol', 'assets/images/enemies/Raider - Leather Jacket - Laser pistol.png');
         this.load.image('Raider - Leather Jacket - SMG', 'assets/images/enemies/Raider - Leather Jacket - SMG.png');
         this.load.image('Raider - Leather Jacket - Frag grenade', 'assets/images/enemies/Raider - Leather Jacket - Frag grenade.png');
@@ -298,13 +282,11 @@ export default class BattleScene extends Phaser.Scene {
         this.load.image('Raider - Leather Armor - Baseball bat', 'assets/images/enemies/Raider - Leather Armor - Baseball bat.png');
         this.load.image('Raider - Leather Armor - 44 Magnum revolver', 'assets/images/enemies/Raider - Leather Armor - 44 Magnum revolver.png');
         this.load.image('Raider - Leather Armor - 9mm pistol', 'assets/images/enemies/Raider - Leather Armor - 44 Magnum revolver.png');
-        this.load.image('Raider - Leather Armor - 44 Desert Eagle', 'assets/images/enemies/Raider - Leather Armor - 44 Desert Eagle.png');
         this.load.image('Raider - Leather Armor - Laser pistol', 'assets/images/enemies/Raider - Leather Armor - Laser pistol.png');
         this.load.image('Raider - Leather Armor - SMG', 'assets/images/enemies/Raider - Leather Armor - SMG.png');
         this.load.image('Raider - Metal Armor - Baseball bat', 'assets/images/enemies/Raider - Metal Armor - Baseball bat.png');
         this.load.image('Raider - Metal Armor - 9mm pistol', 'assets/images/enemies/Raider - Metal Armor - 44 Magnum revolver.png');
         this.load.image('Raider - Metal Armor - 44 Magnum revolver', 'assets/images/enemies/Raider - Metal Armor - 44 Magnum revolver.png');
-        this.load.image('Raider - Metal Armor - 44 Desert Eagle', 'assets/images/enemies/Raider - Metal Armor - 44 Desert Eagle.png');
         this.load.image('Raider - Metal Armor - Laser pistol', 'assets/images/enemies/Raider - Metal Armor - Laser pistol.png');
         this.load.image('Raider - Metal Armor - SMG', 'assets/images/enemies/Raider - Metal Armor - SMG.png');
 
@@ -359,7 +341,6 @@ export default class BattleScene extends Phaser.Scene {
         this.load.audio('Baseball bat - attack', 'assets/sounds/enemies/Baseball bat - attack.mp3');
         this.load.audio('44 Magnum revolver - attack', 'assets/sounds/enemies/44 Magnum revolver - attack.mp3');
         this.load.audio('9mm pistol - attack', 'assets/sounds/enemies/9mm pistol - attack.mp3');
-        this.load.audio('44 Desert Eagle - attack', 'assets/sounds/enemies/44 Desert Eagle - attack.mp3');
         this.load.audio('Laser pistol - attack', 'assets/sounds/enemies/Laser pistol - attack.mp3');
         this.load.audio('SMG - attack', 'assets/sounds/enemies/SMG - attack.mp3');
         this.load.audio('Frag grenade - attack', 'assets/sounds/enemies/Frag grenade - attack.mp3');
@@ -694,23 +675,20 @@ export default class BattleScene extends Phaser.Scene {
                 if (enemy.attack.weapon == '9mm pistol') {
                     this.gameData.levelLoot.push(2);
                 }
-                if (enemy.attack.weapon == '44 Desert Eagle') {
+                if (enemy.attack.weapon == 'Frag grenade') {
                     this.gameData.levelLoot.push(3);
                 }
-                if (enemy.attack.weapon == 'Frag grenade') {
+                if (enemy.attack.weapon == '44 Magnum revolver') {
                     this.gameData.levelLoot.push(4);
                 }
-                if (enemy.attack.weapon == '44 Magnum revolver') {
+                if (enemy.attack.weapon == 'Laser rifle') {
                     this.gameData.levelLoot.push(5);
                 }
-                if (enemy.attack.weapon == 'Laser rifle') {
+                if (enemy.attack.weapon == 'Combat shotgun') {
                     this.gameData.levelLoot.push(6);
                 }
-                if (enemy.attack.weapon == 'Combat shotgun') {
-                    this.gameData.levelLoot.push(7);
-                }
                 if (enemy.attack.weapon == 'SMG') {
-                    this.gameData.levelLoot.push(8);
+                    this.gameData.levelLoot.push(7);
                 }
                 enemy.healthIndicator.destroy();
                 enemy.destroy();
@@ -732,7 +710,7 @@ export default class BattleScene extends Phaser.Scene {
         if (this.playerHealth <= 0) {
             this.registry.set('gameData', {
                 levelCount: 1,
-                health: 30,
+                health: 15,
                 experience: 0,
                 skills: {
                     small_guns: 75,
@@ -750,7 +728,7 @@ export default class BattleScene extends Phaser.Scene {
                 },
                 current_weapon: 'Baseball bat',
                 current_armor: 'Leather Jacket',
-                weapons: ['Baseball bat', '44 Magnum revolver', '9mm pistol', '44 Desert Eagle', 'Laser pistol',
+                weapons: ['Baseball bat', '9mm pistol', '44 Magnum revolver', 'Laser pistol',
                             'SMG', 'Frag grenade', 'Combat shotgun', 'Laser rifle', 'Minigun'],
                 med: {
                     first_aid_kit: 5,

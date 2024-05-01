@@ -12,7 +12,7 @@ export default class MainMenu extends Phaser.Scene {
         if (!this.registry.has('gameData')) {
             this.registry.set('gameData', {
                 levelCount: 1,
-                health: 30,
+                health: 15,
                 experience: 0,
                 skills: {
                     small_guns: 75,
@@ -30,7 +30,7 @@ export default class MainMenu extends Phaser.Scene {
                 },
                 current_weapon: 'Baseball bat',
                 current_armor: 'Leather Jacket',
-                weapons: ['Baseball bat', '44 Magnum revolver', '9mm pistol', '44 Desert Eagle', 'Laser pistol',
+                weapons: ['Baseball bat', '9mm pistol', '44 Magnum revolver', 'Laser pistol',
                             'SMG', 'Frag grenade', 'Combat shotgun', 'Laser rifle', 'Minigun'],
                 med: {
                     first_aid_kit: 5,
