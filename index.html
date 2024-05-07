@@ -27,9 +27,18 @@
             <li>Use <strong>SHIFT</strong> to escape, when blue button appears on the screen.</li>
             <li>Use letters <strong>Z, X, C, V, B</strong> to use medicine, if it is available.</li>
         </ul>
+        <button id="actionButton">Press Me!</button>
     </div>
 
 <!-- Подключение вашего основного скрипта игры -->
 <script type="module" src="game.js"></script>
+<script>
+    document.getElementById('actionButton').addEventListener('click', function() {
+        gtag('event', 'button_click', {
+            'event_category': 'User Interaction',
+            'event_label': 'Press Me Button Clicked'
+        });
+    });
+</script>
 </body>
 </html>
