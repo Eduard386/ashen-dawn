@@ -48,7 +48,6 @@ export default class MainMenu extends Phaser.Scene {
                 },
                 enemiesToCreate: [],
                 levelLoot: [],
-                markerPosition: { x: 25, y: 25 }
             });
         }
         this.gameData = this.registry.get('gameData');

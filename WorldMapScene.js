@@ -1,13 +1,23 @@
 export default class WorldMapScene extends Phaser.Scene {
     constructor() {
+        
         super({ key: 'WorldMapScene' });
+
+        // Флаги и состояние
         this.popupActive = false;
         this.selectedButton = 'Yes'; // По умолчанию выбрана кнопка "No"
-        this.distanceTraveled = 0;
-        this.popupDistanceThreshold = Phaser.Math.Between(50, 150);
-        this.soundtrackNames = ['A Traders Life (in NCR)', 'All-Clear Signal (Vault City)', 'Beyond The Canyon (Arroyo)',
-            'California Revisited (Worldmap on foot)', 'Khans of New California (in the Den)', 'Moribund World (in Klamath)',
-            'My Chrysalis Highwayman (Worldmap with Car)']; // Замените на реальные названия треков
+        
+        // Саундтреки
+        this.soundtrackNames = [
+            'A Traders Life (in NCR)',
+            'All-Clear Signal (Vault City)',
+            'Beyond The Canyon (Arroyo)',
+            'California Revisited (Worldmap on foot)',
+            'Khans of New California (in the Den)',
+            'Moribund World (in Klamath)',
+            'My Chrysalis Highwayman (Worldmap with Car)',
+        ];
+
         this.enemies_all = [
             {
                 name: 'Rat', type: 'creature',
@@ -44,105 +54,43 @@ export default class WorldMapScene extends Phaser.Scene {
         this.soundtrackNames.forEach(name => {
             this.load.audio(name, 'assets/sounds/battle_background/' + name + '.mp3');
         });
-        this.load.image('worldMap', 'assets/images/map.png');
-        this.load.image('playerMarker', 'assets/images/marker.png');
+        this.load.audio('travel', 'assets/psychobilly.mp3');
+
+        this.load.video('road', 'assets/road.mp4'); 
         this.load.image('yes', 'assets/images/yes.png');
         this.load.image('no', 'assets/images/no.png');
     }
 
     create() {
         this.gameData = this.registry.get('gameData');
-        this.initializeEncounterMap();
         this.playRandomSoundtrack();
-        this.map = this.add.image(0, 0, 'worldMap').setOrigin(0, 0);
+        //this.map = this.add.image(0, 0, 'road').setOrigin(0, 0);
 
-        // Создание объекта Graphics для рисования линий
-        const lines = this.add.graphics({ lineStyle: { width: 1, color: 0x000000 } });
+        const video = this.add.video(0, 0, 'road')
+        .setOrigin(0)               // Начало координат в левом верхнем углу
+        //.setDisplaySize(1024, 600); // Растянуть на весь размер вашей сцены
+        video.play(true);  // true = зациклить
 
-        // Рисование горизонтальных и вертикальных линий
-        for (let i = 0; i <= 2000; i += 100) {
-            // Горизонтальные линии
-            lines.lineBetween(0, i, 2000, i);
-            // Вертикальные линии
-            lines.lineBetween(i, 0, i, 2000);
-        }
-
-        // Создание маркера игрока
-        const markerPosition = this.gameData.markerPosition || { x: 25, y: 25 };
-        this.playerMarker = this.add.image(markerPosition.x, markerPosition.y, 'playerMarker').setOrigin(0.5, 0.5);
-
-        // Установка границ мира
-        this.physics.world.bounds.width = 2000;
-        this.physics.world.bounds.height = 2000;
-
-        // Конфигурация камеры
-        this.cameras.main.setSize(1024, 600);
-        this.cameras.main.setBounds(0, 0, 2000, 2000);
-
-        // Контроллеры для управления маркером
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
+        // Готовим всплывающее окно (модалку), но сразу скрываем
         this.createPopup();
+
+        // Запускаем таймер, который через n..m секунд покажет модалку
+        this.startRandomEncounterTimer();
     }
 
     update() {
-        if (!this.popupActive) {
-            this.handleMovement();
-            this.checkForPopup();
-        } else {
+        if (this.popupActive) {
             this.handlePopupInput();
         }
     }
 
-    initializeEncounterMap() {
-        this.encounterMap = {
-            'A20': [
-                { enemy: 'Rat', probability: 0.5 },
-                { enemy: 'Mantis', probability: 0.5 }
-                // Другие возможные встречи для квадрата A1
-            ],
-            // Определения для других квадратов...
-            'B20': [
-                { enemy: 'Tribe', probability: 0.8 },
-                { enemy: 'Cannibals', probability: 0.2 }
-                // Другие возможные встречи для квадрата T20
-            ]
-            // Определения для всех квадратов сетки...
-        };
-    }
-
-    weightedRandom(choices) {
-        const sum = choices.reduce((acc, choice) => acc + choice.probability * 100, 0);
-        let random = Math.random() * sum;
-
-        for (let choice of choices) {
-            random -= choice.probability * 100;
-            if (random < 0) {
-                return choice.enemy;
-            }
-        }
-    }
-
-    getEncounter(square) {
-        const possibleEncounters = this.encounterMap[square];
-        //if (!possibleEncounters) return null; // Если нет встреч для данного квадрата
-        if (!possibleEncounters) return this.weightedRandom(this.encounterMap['A20']);
-        return this.weightedRandom(possibleEncounters);
-    }
-
-    // Функция для определения текущего квадрата маркера
-    getCurrentSquare(x, y) {
-        const column = Math.floor(x / 100); // 0...19
-        const row = Math.floor(y / 100); // 0...19
-        const columnLetter = String.fromCharCode(65 + column); // A...T
-        const rowNumber = 20 - row; // 1...20 (сверху вниз)
-        return `${columnLetter}${rowNumber}`;
-    }
-
     playRandomSoundtrack() {
-        let randomIndex = Phaser.Math.Between(0, this.soundtrackNames.length - 1);
-        this.soundtrack = this.sound.add(this.soundtrackNames[randomIndex]);
+        //let randomIndex = Phaser.Math.Between(0, this.soundtrackNames.length - 1);
+        //this.soundtrack = this.sound.add(this.soundtrackNames[randomIndex]);
+        this.soundtrack = this.sound.add('travel');
 
         this.soundtrack.play();
 
@@ -151,117 +99,97 @@ export default class WorldMapScene extends Phaser.Scene {
         });
     }
 
-    handleMovement() {
-        const speed = 1;
-        let cameraFollow = false;
-        const mapWidth = 2000;
-        const mapHeight = 2000;
-        let moved = false;
+    // ===== Таймер появления модалки =====
+    startRandomEncounterTimer() {
+        // Пусть n=5, m=15 секунд (пример)
+        const n = 3;
+        const m = 6;
 
-        if (this.cursors.left.isDown && this.playerMarker.x > 0) {
-            this.playerMarker.x -= speed;
-            cameraFollow = true;
-            moved = true;
-        } else if (this.cursors.right.isDown && this.playerMarker.x < mapWidth) {
-            this.playerMarker.x += speed;
-            cameraFollow = true;
-            moved = true;
-        }
+        this.time.addEvent({
+            delay: Phaser.Math.Between(n * 1000, m * 1000),
+            callback: () => {
+                if (!this.popupActive) {
+                    // Допустим, шанс зависит от скилла "surviving"
+                    const survivingSkill = this.gameData?.skills?.surviving || 0;
+                    const randomChance = Phaser.Math.Between(1, 100);
 
-        if (this.cursors.up.isDown && this.playerMarker.y > 0) {
-            this.playerMarker.y -= speed;
-            cameraFollow = true;
-            moved = true;
-        } else if (this.cursors.down.isDown && this.playerMarker.y < mapHeight) {
-            this.playerMarker.y += speed;
-            cameraFollow = true;
-            moved = true;
-        }
-
-        // Если маркер двигался, обновляем положение камеры и расстояние
-        if (cameraFollow) {
-            const cameraHalfWidth = this.cameras.main.width / 2;
-            const cameraHalfHeight = this.cameras.main.height / 2;
-
-            if (this.playerMarker.x > cameraHalfWidth && this.playerMarker.x < (2000 - cameraHalfWidth)) {
-                this.cameras.main.scrollX = this.playerMarker.x - cameraHalfWidth;
-            }
-
-            if (this.playerMarker.y > cameraHalfHeight && this.playerMarker.y < (2000 - cameraHalfHeight)) {
-                this.cameras.main.scrollY = this.playerMarker.y - cameraHalfHeight;
-            }
-            if (moved) {
-                this.distanceTraveled += speed;
-                this.checkForPopup();
-            }
-        }
+                    if (randomChance <= survivingSkill) {
+                        this.showPopup(true);
+                    } else {
+                        this.showPopup(false);
+                    }
+                }
+                // Снова запускаем таймер, чтобы периодически вызывать модалку
+                this.startRandomEncounterTimer();
+            },
+            loop: false
+        });
     }
 
-    createPopup(text) {
+    createPopup(text = '') {
         const cameraCenterX = this.cameras.main.width / 2;
         const cameraCenterY = this.cameras.main.height / 2;
 
-        // Создание фона для всплывающего окна
+        // Фон модалки
         this.popupBackground = this.add.graphics({ x: cameraCenterX, y: cameraCenterY })
-            .fillStyle(0x000000, 0.75) // Черный цвет с полупрозрачностью
-            .fillRect(-150, -100, 300, 200); // Относительные координаты
+            .fillStyle(0x000000, 0.75)
+            .fillRect(-150, -100, 300, 200);
         this.popupBackground.setScrollFactor(0);
 
-        // Добавление текста
+        // Текст
         this.popupText = this.add.text(cameraCenterX, cameraCenterY - 50, text, {
             fontSize: '16px',
             fill: '#0f0'
         }).setOrigin(0.5);
         this.popupText.setScrollFactor(0);
 
-        // Добавление кнопок
+        // Кнопки
         this.yesButton = this.add.image(cameraCenterX - 50, cameraCenterY + 50, 'yes').setInteractive();
         this.yesButton.setScrollFactor(0);
+
         this.noButton = this.add.image(cameraCenterX + 50, cameraCenterY + 50, 'no').setInteractive();
         this.noButton.setScrollFactor(0);
 
-        // Скрытие элементов всплывающего окна
+        // Сразу скрываем
         this.hidePopup();
     }
 
     showPopup(hasNoButton) {
-        let result = this.getLevelConfig(this.gameData.levelCount);
-        this.gameData.enemiesToCreate = result[1];
-        //this.registry.set('gameData', this.gameData);
-        console.log(`You encounter ${result[0]}.`);
-        console.log(`A imenno ${result[1]}.`);
+        // Генерируем врагов
+        let [enemyName, enemiesToCreate] = this.getLevelConfig(this.gameData?.levelCount);
+        this.gameData.enemiesToCreate = enemiesToCreate;  // Сохраняем в gameData
+        console.log(`You encounter ${enemyName}.`, enemiesToCreate);
 
-        this.createPopup(`You encounter ${result[0]}.`);
+        // Обновляем текст
+        this.popupText.setText(`You encounter ${enemyName}.`);
+
+        // Показываем фон/текст
         this.popupBackground.visible = true;
         this.popupText.visible = true;
         this.yesButton.visible = true;
 
         if (hasNoButton) {
             this.noButton.visible = true;
+            // Разносим кнопки
             this.yesButton.setPosition(this.cameras.main.width / 2 - 50, this.cameras.main.height / 2 + 50);
             this.noButton.setPosition(this.cameras.main.width / 2 + 50, this.cameras.main.height / 2 + 50);
-            this.selectedButton = 'No'; // Стартовая активная кнопка
+            this.selectedButton = 'No';
         } else {
+            // Если нет кнопки "No"
             this.noButton.visible = false;
             this.yesButton.setPosition(this.cameras.main.width / 2, this.cameras.main.height / 2 + 50);
-            this.selectedButton = 'Yes'; // Единственная активная кнопка
+            this.selectedButton = 'Yes';
         }
 
         this.popupActive = true;
     }
 
     hidePopup() {
-        // Устанавливаем элементы всплывающего окна невидимыми
         this.popupBackground.visible = false;
         this.popupText.visible = false;
         this.yesButton.visible = false;
         this.noButton.visible = false;
-
-        // Деактивируем всплывающее окно
         this.popupActive = false;
-
-        // Возобновляем движение или взаимодействие вне всплывающего окна
-        // (здесь можно добавить дополнительный код, если необходимо)
     }
 
     handlePopupInput() {
@@ -279,7 +207,6 @@ export default class WorldMapScene extends Phaser.Scene {
 
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
             if (this.selectedButton === 'Yes') {
-                this.gameData.markerPosition = { x: this.playerMarker.x, y: this.playerMarker.y };
                 if (['Rat', 'Mantis', 'Cannibals'].includes(this.chosenEnemy.name)) {
                     this.scene.start('BattleScene');
                 } else {
@@ -292,38 +219,22 @@ export default class WorldMapScene extends Phaser.Scene {
         }
     }
 
-    checkForPopup() {
-        if (this.distanceTraveled >= this.popupDistanceThreshold && !this.popupActive) {
-            const randomChance = Phaser.Math.Between(1, 100);
-            const survivingSkill = this.registry.get('gameData').skills.surviving;
-
-            if (randomChance <= survivingSkill) {
-                this.showPopup(true);  // Если случайное число меньше или равно навыку surviving, показываем обычный popup
-            } else {
-                this.showPopup(false);  // Если больше, показываем popup без кнопки No
-            }
-
-            this.distanceTraveled = 0;
-            this.popupDistanceThreshold = Phaser.Math.Between(50, 150);
-        }
-    }
-
+    // ===== Логика определения, каких врагов генерировать =====
     getLevelConfig(player_level) {
         let enemiesToCreate = [];
 
-        const currentSquare = this.getCurrentSquare(this.playerMarker.x, this.playerMarker.y);
-        console.log(currentSquare); // Выведет выбранного врага для квадрата A20
-        const encounter = this.getEncounter(currentSquare);
-        console.log(encounter); // Выведет выбранного врага для квадрата A20
+        // Выбираем случайного врага
+        this.chosenEnemy = Phaser.Utils.Array.GetRandom(this.enemies_all);
 
-        this.chosenEnemy = this.enemies_all.filter(enemy => enemy.name === encounter)[0];
-        let numberOfEnemies = Phaser.Math.Between(this.chosenEnemy.amount.min, this.chosenEnemy.amount.max);
+        let numberOfEnemies = Phaser.Math.Between(
+            this.chosenEnemy.amount.min,
+            this.chosenEnemy.amount.max
+        );
 
-        // Генерируем врагов
+        // Собираем список имен
         for (let i = 0; i < numberOfEnemies; i++) {
             const randomIndex = Math.floor(Math.random() * this.chosenEnemy.title.length);
-            const item = this.chosenEnemy.title[randomIndex];
-            enemiesToCreate.push(item);
+            enemiesToCreate.push(this.chosenEnemy.title[randomIndex]);
         }
 
         return [this.chosenEnemy.name, enemiesToCreate];
