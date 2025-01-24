@@ -1,6 +1,6 @@
 // game.js
 import WorldMapScene from './WorldMapScene.js';
-import MainMenu from './MainMenu.js';
+import MainMenu from './mainMenu.js';
 import BattleScene from './BattleScene.js';
 import DeadScene from './DeadScene.js';
 import VictoryScene from './VictoryScene.js';
