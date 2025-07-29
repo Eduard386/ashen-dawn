@@ -64,7 +64,7 @@ export default class VictoryScene extends Phaser.Scene {
             if (lootIndex > currentIndex) {
                 this.gameData.current_armor = this.gameData.armorLoot;
             }
-            lootInfo[this.gameData.armorLoot] = 1;
+            // Броня применяется сразу, но не отображается среди лута
         }
 
         this.gameData.levelLoot.forEach(loot => {
