@@ -589,6 +589,12 @@ export default class BattleScene extends Phaser.Scene {
 
     playEnemyAttackSound(enemy, isHit) {
         if (enemy.attack.weapon) {
+            const attackKey = enemy.attack.weapon + ' - attack';
+            if (this.cache.audio.exists(attackKey)) {
+                this.sound.play(attackKey);
+                return;
+            }
+
             if (isHit) {
                 const hitKey = enemy.attack.weapon + ' - hit';
                 if (this.cache.audio.exists(hitKey)) {
