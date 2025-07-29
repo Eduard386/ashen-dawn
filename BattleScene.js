@@ -350,7 +350,7 @@ export default class BattleScene extends Phaser.Scene {
             }).setOrigin(1, 0).setScrollFactor(0);
         });
 
-        if (this.chosenWeapon.type !== 'meele') {
+        if (this.chosenWeapon.type !== 'melee') {
             this.ammo_sprite = this.add.sprite(25, 495, this.chosenWeapon.type).setOrigin(0, 0).setScrollFactor(0);
             const count = this.gameData.ammo[this.chosenWeapon.type];
             this.ammoText.setText(count > 0 ? `x${count}` : '').setScrollFactor(0);
