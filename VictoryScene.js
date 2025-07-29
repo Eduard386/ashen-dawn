@@ -1,3 +1,5 @@
+import GameData from './utils/GameData.js';
+
 export default class VictoryScene extends Phaser.Scene {
     constructor() {
         super({ key: 'VictoryScene' });
@@ -41,7 +43,7 @@ export default class VictoryScene extends Phaser.Scene {
     }
 
     create() {
-        this.gameData = this.registry.get('gameData');
+        this.gameData = GameData.get();
         this.add.image(0, 0, 'victory background').setOrigin(0, 0).setScrollFactor(0);
         this.victory_music = this.sound.add('victory music');
         this.victory_music.play()
@@ -127,7 +129,7 @@ export default class VictoryScene extends Phaser.Scene {
 
         this.gameData.levelLoot = [];
         this.gameData.armorLoot = null;
-        this.registry.set('gameData', this.gameData);
+        GameData.set(this.gameData);
 
 
     }

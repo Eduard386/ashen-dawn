@@ -1,3 +1,5 @@
+import GameData from './utils/GameData.js';
+
 export default class WorldMapScene extends Phaser.Scene {
     constructor() {
         
@@ -94,7 +96,7 @@ export default class WorldMapScene extends Phaser.Scene {
     }
 
     create() {
-        this.gameData = this.registry.get('gameData');
+        this.gameData = GameData.get();
         this.playRandomSoundtrack();
         //this.map = this.add.image(0, 0, 'road').setOrigin(0, 0);
 
