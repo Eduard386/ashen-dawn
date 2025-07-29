@@ -60,28 +60,6 @@ export default class BattleScene extends Phaser.Scene {
             this.load.image('weapon ' + weapon.name, 'assets/images/weapons/' + weapon.name + '.png');
             this.load.image('hand ' + weapon.name, 'assets/images/hands/' + weapon.name + '.png');
         });
-        this.load.image('Raider - Leather Jacket - Baseball bat', 'assets/images/enemies/Raider - Leather Jacket - Baseball bat.png');
-        this.load.image('Raider - Leather Jacket - 44 Magnum revolver', 'assets/images/enemies/Raider - Leather Jacket - 44 Magnum revolver.png');
-        this.load.image('Raider - Leather Jacket - 9mm pistol', 'assets/images/enemies/Raider - Leather Jacket - 9mm pistol.png');
-        this.load.image('Raider - Leather Jacket - 44 Desert Eagle', 'assets/images/enemies/Raider - Leather Jacket - 44 Desert Eagle.png');
-        this.load.image('Raider - Leather Jacket - Laser pistol', 'assets/images/enemies/Raider - Leather Jacket - Laser pistol.png');
-        this.load.image('Raider - Leather Jacket - SMG', 'assets/images/enemies/Raider - Leather Jacket - SMG.png');
-        this.load.image('Raider - Leather Jacket - Frag grenade', 'assets/images/enemies/Raider - Leather Jacket - Frag grenade.png');
-        this.load.image('Raider - Leather Jacket - Combat shotgun', 'assets/images/enemies/Raider - Leather Jacket - Combat shotgun.png');
-        this.load.image('Raider - Leather Jacket - Laser rifle', 'assets/images/enemies/Raider - Leather Jacket - Laser rifle.png');
-        this.load.image('Raider - Leather Jacket - Minigun', 'assets/images/enemies/Raider - Leather Jacket - Minigun.png');
-        this.load.image('Raider - Leather Armor - Baseball bat', 'assets/images/enemies/Raider - Leather Armor - Baseball bat.png');
-        this.load.image('Raider - Leather Armor - 44 Magnum revolver', 'assets/images/enemies/Raider - Leather Armor - 44 Magnum revolver.png');
-        this.load.image('Raider - Leather Armor - 9mm pistol', 'assets/images/enemies/Raider - Leather Armor - 9mm pistol.png');
-        this.load.image('Raider - Leather Armor - 44 Desert Eagle', 'assets/images/enemies/Raider - Leather Armor - 44 Desert Eagle.png');
-        this.load.image('Raider - Leather Armor - Laser pistol', 'assets/images/enemies/Raider - Leather Armor - Laser pistol.png');
-        this.load.image('Raider - Leather Armor - SMG', 'assets/images/enemies/Raider - Leather Armor - SMG.png');
-        this.load.image('Raider - Metal Armor - Baseball bat', 'assets/images/enemies/Raider - Metal Armor - Baseball bat.png');
-        this.load.image('Raider - Metal Armor - 9mm pistol', 'assets/images/enemies/Raider - Metal Armor - 9mm pistol.png');
-        this.load.image('Raider - Metal Armor - 44 Magnum revolver', 'assets/images/enemies/Raider - Metal Armor - 44 Magnum revolver.png');
-        this.load.image('Raider - Metal Armor - 44 Desert Eagle', 'assets/images/enemies/Raider - Metal Armor - 44 Desert Eagle.png');
-        this.load.image('Raider - Metal Armor - Laser pistol', 'assets/images/enemies/Raider - Metal Armor - Laser pistol.png');
-        this.load.image('Raider - Metal Armor - SMG', 'assets/images/enemies/Raider - Metal Armor - SMG.png');
 
         this.enemies_all.forEach(enemy => {
             enemy.title.forEach(title => {
@@ -848,6 +826,7 @@ export default class BattleScene extends Phaser.Scene {
         let weaponIndex;
         let armorName;
         let enemyType;
+        let enemy;
 
         if (enemy_name.startsWith('Raider')) {
             const parts = enemy_name.split(' - ');
@@ -873,7 +852,7 @@ export default class BattleScene extends Phaser.Scene {
         }
 
         let startPosition = Phaser.Math.Clamp(xPosition, 512, 1536);
-        let enemy = this.add.image(startPosition, 330, enemy_name);
+        enemy = this.add.image(startPosition, 330, enemy_name);
 
         enemy.name = enemy_name
         //enemy.title = unique_enemy_obj.title
@@ -1001,9 +980,15 @@ export default class BattleScene extends Phaser.Scene {
                     this.playerHealth -= Math.round(totalDamage);  // Уменьшение здоровья игрока
                     this.updateHealthDisplay()
                     if (enemy.attack.weapon) {
-                        this.sound.play(enemy.attack.weapon + ' - attack');
+                        const key = enemy.attack.weapon + ' - attack';
+                        if (this.cache.audio.exists(key)) {
+                            this.sound.play(key);
+                        }
                     } else {
-                        this.sound.play(enemy.name + ' - attack');
+                        const key = enemy.name + ' - attack';
+                        if (this.cache.audio.exists(key)) {
+                            this.sound.play(key);
+                        }
                     }
 
                     // Показываем изображение крови
@@ -1021,9 +1006,15 @@ export default class BattleScene extends Phaser.Scene {
             } else {
                 console.log(`${enemy.name} missed.`)
                 if (enemy.attack.weapon) {
-                    this.sound.play(enemy.attack.weapon + ' - attack');
+                    const key = enemy.attack.weapon + ' - attack';
+                    if (this.cache.audio.exists(key)) {
+                        this.sound.play(key);
+                    }
                 } else {
-                    this.sound.play(enemy.name + ' - attack');
+                    const key = enemy.name + ' - attack';
+                    if (this.cache.audio.exists(key)) {
+                        this.sound.play(key);
+                    }
                 }
             }
             enemy.canAttack = false
