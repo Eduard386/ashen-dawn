@@ -209,16 +209,22 @@ export default class BattleScene extends Phaser.Scene {
 
     updateClipBar() {
         this.clipBar.clear();  // Очищаем предыдущий индикатор
+
+        // Индикатор не отображается для оружия ближнего боя
+        if (this.chosenWeapon.type === 'melee') {
+            this.clipBar.setVisible(false);
+            return;
+        }
+
+        this.clipBar.setVisible(true);
         this.clipBar.fillStyle(0x11E100);  // Устанавливаем цвет индикатора (зеленый)
 
-        const clipBlockWidth = 20; // Ширина каждого блока здоровья
+        const clipBlockWidth = 20; // Ширина каждого блока патронов
         const clipBlockSpacing = 2; // Расстояние между блоками
-        const clipBlockHeight = 8; // Высота блока здоровья
-        if (this.chosenWeapon.type !== 'melee') {
-            for (let i = 0; i < this.bullets_in_current_clip; i++) {
-                const yPosition = 575 - i * (clipBlockHeight + clipBlockSpacing);
-                this.clipBar.fillRect(5, yPosition, clipBlockWidth, clipBlockHeight);
-            }
+        const clipBlockHeight = 8; // Высота блока патронов
+        for (let i = 0; i < this.bullets_in_current_clip; i++) {
+            const yPosition = 575 - i * (clipBlockHeight + clipBlockSpacing);
+            this.clipBar.fillRect(5, yPosition, clipBlockWidth, clipBlockHeight);
         }
     }
 
@@ -276,7 +282,11 @@ export default class BattleScene extends Phaser.Scene {
         //this.add.sprite(915, 100, 'weapon ' + this.chosenWeapon.name).setScrollFactor(0);
 
         this.text_params = {fontSize: '22px', fill: '#ffffff', fontFamily: 'Arial', fontWeight: 'bold'}
-        this.ammoText = this.add.text(30, 495, '', this.text_params);
+
+        // Текст и индикатор перезарядки будут показаны только для оружия с патронами
+        if (this.chosenWeapon.type !== 'melee') {
+            this.ammoText = this.add.text(30, 495, '', this.text_params);
+        }
 
         // Создание графического объекта для индикатора
         this.clipBar = this.add.graphics().setScrollFactor(0);
@@ -288,6 +298,9 @@ export default class BattleScene extends Phaser.Scene {
         } else {
             this.bullets_in_current_clip = 0
         }
+
+        // Скрываем индикатор магазина, если оружие ближнего боя
+        this.updateClipBar();
 
         // Создание нового изображения (руки) из другой папки
         this.hand_sprite = this.add.sprite(this.cameras.main.width - 115, this.cameras.main.height - 88, 'hand ' + this.chosenWeapon.name).setScrollFactor(0);
