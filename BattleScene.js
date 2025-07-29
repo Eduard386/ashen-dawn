@@ -587,6 +587,29 @@ export default class BattleScene extends Phaser.Scene {
         });
     }
 
+    playEnemyAttackSound(enemy, isHit) {
+        if (enemy.attack.weapon) {
+            if (isHit) {
+                const hitKey = enemy.attack.weapon + ' - hit';
+                if (this.cache.audio.exists(hitKey)) {
+                    this.sound.play(hitKey);
+                    return;
+                }
+            } else {
+                const missKey = enemy.attack.weapon + ' - miss ' + Phaser.Math.Between(1, 3);
+                if (this.cache.audio.exists(missKey)) {
+                    this.sound.play(missKey);
+                    return;
+                }
+            }
+        }
+
+        const fallbackKey = enemy.name + ' - attack';
+        if (this.cache.audio.exists(fallbackKey)) {
+            this.sound.play(fallbackKey);
+        }
+    }
+
     tiltEffect() {
         const tiltDirection = Math.random() < 0.5 ? -1 : 1;
         const maxRotation = 0.05 * tiltDirection; // Максимальный угол наклона
@@ -979,17 +1002,7 @@ export default class BattleScene extends Phaser.Scene {
                     console.log(`You were hit by ${enemy.name} on ${Math.round(totalDamage)}`);
                     this.playerHealth -= Math.round(totalDamage);  // Уменьшение здоровья игрока
                     this.updateHealthDisplay()
-                    if (enemy.attack.weapon) {
-                        const key = enemy.attack.weapon + ' - attack';
-                        if (this.cache.audio.exists(key)) {
-                            this.sound.play(key);
-                        }
-                    } else {
-                        const key = enemy.name + ' - attack';
-                        if (this.cache.audio.exists(key)) {
-                            this.sound.play(key);
-                        }
-                    }
+                    this.playEnemyAttackSound(enemy, true);
 
                     // Показываем изображение крови
                     this.tiltEffect();
@@ -1005,17 +1018,7 @@ export default class BattleScene extends Phaser.Scene {
                 }
             } else {
                 console.log(`${enemy.name} missed.`)
-                if (enemy.attack.weapon) {
-                    const key = enemy.attack.weapon + ' - attack';
-                    if (this.cache.audio.exists(key)) {
-                        this.sound.play(key);
-                    }
-                } else {
-                    const key = enemy.name + ' - attack';
-                    if (this.cache.audio.exists(key)) {
-                        this.sound.play(key);
-                    }
-                }
+                this.playEnemyAttackSound(enemy, false);
             }
             enemy.canAttack = false
             this.setAttackTimer(enemy);
