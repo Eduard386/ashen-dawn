@@ -938,10 +938,13 @@ export default class BattleScene extends Phaser.Scene {
         const enemy_obj = this.enemies_all.find(enemy => enemy.title.includes(enemy_name));
         const unique_enemy_obj = JSON.parse(JSON.stringify(enemy_obj));
 
-        // Special handling for Raiders based on their title
+        // Parse info for Raiders before creating the sprite
+        let weaponIndex;
+        let armorName;
+        let enemyType;
         if (enemy_name.startsWith('Raider')) {
             const parts = enemy_name.split(' - ');
-            const armorName = parts[1];
+            armorName = parts[1];
             const weaponName = parts.slice(2).join(' - ');
 
             const weapon = this.weapons.find(w => w.name === weaponName);
@@ -949,7 +952,7 @@ export default class BattleScene extends Phaser.Scene {
                 unique_enemy_obj.attack.weapon = weapon.name;
                 unique_enemy_obj.attack.damage = { ...weapon.damage };
                 unique_enemy_obj.attack.shots = weapon.shots;
-                enemy.weaponIndex = this.weapons.indexOf(weapon);
+                weaponIndex = this.weapons.indexOf(weapon);
             }
 
             const armor = this.armors.find(a => a.name === armorName);
@@ -959,8 +962,7 @@ export default class BattleScene extends Phaser.Scene {
                 unique_enemy_obj.defence.resistance = armor.resistance;
             }
 
-            enemy.armorName = armorName;
-            enemy.enemyType = 'Raiders';
+            enemyType = 'Raiders';
         }
 
         let startPosition = Phaser.Math.Clamp(xPosition, 512, 1536);
@@ -986,6 +988,17 @@ export default class BattleScene extends Phaser.Scene {
         enemy.speed = speed;
         enemy.direction = direction;
         enemy.moveThreshold = moveThreshold;
+
+        // Assign raider specific properties if set
+        if (weaponIndex !== undefined) {
+            enemy.weaponIndex = weaponIndex;
+        }
+        if (armorName) {
+            enemy.armorName = armorName;
+        }
+        if (enemyType) {
+            enemy.enemyType = enemyType;
+        }
 
         // Определите границы движения врага
         let minBound = 512;
