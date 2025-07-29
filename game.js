@@ -1,10 +1,10 @@
 // game.js
-import MainMenu from './mainMenu.js';
-import WorldMapScene from './WorldMapScene.js';
-import BattleScene from './BattleScene.js';
-import DeadScene from './DeadScene.js';
-import VictoryScene from './VictoryScene.js';
-import EncounterScene from './EncounterScene.js';
+import MainMenu from './scenes/MainMenu.js';
+import WorldMapScene from './scenes/WorldMapScene.js';
+import BattleScene from './scenes/BattleScene.js';
+import DeadScene from './scenes/DeadScene.js';
+import VictoryScene from './scenes/VictoryScene.js';
+import EncounterScene from './scenes/EncounterScene.js';
 
 var config = {
     type: Phaser.WEBGL,
