@@ -938,12 +938,11 @@ export default class BattleScene extends Phaser.Scene {
         const enemy_obj = this.enemies_all.find(enemy => enemy.title.includes(enemy_name));
         const unique_enemy_obj = JSON.parse(JSON.stringify(enemy_obj));
 
-        // Variables to store raider specific info
+        // Parse info for Raiders before creating the sprite
         let weaponIndex;
         let armorName;
         let enemyType;
 
-        // Special handling for Raiders based on their title
         if (enemy_name.startsWith('Raider')) {
             const parts = enemy_name.split(' - ');
             armorName = parts[1];
