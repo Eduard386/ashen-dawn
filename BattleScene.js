@@ -942,6 +942,7 @@ export default class BattleScene extends Phaser.Scene {
         let weaponIndex;
         let armorName;
         let enemyType;
+
         if (enemy_name.startsWith('Raider')) {
             const parts = enemy_name.split(' - ');
             armorName = parts[1];
