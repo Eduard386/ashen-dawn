@@ -242,7 +242,7 @@ export default class WorldMapScene extends Phaser.Scene {
                 if (this.soundtrack) {
                     this.soundtrack.stop();
                 }
-                if (['Rat', 'Mantis', 'Cannibals'].includes(this.chosenEnemy.name)) {
+                if (['Rat', 'Mantis', 'Cannibals', 'Raiders'].includes(this.chosenEnemy.name)) {
                     this.scene.start('BattleScene');
                 } else {
                     this.scene.start('EncounterScene');
