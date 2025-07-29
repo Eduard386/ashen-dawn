@@ -1,3 +1,4 @@
+import GameData from './utils/GameData.js';
 import enemies from './data/enemies.js';
 
 export default class BattleScene extends Phaser.Scene {
@@ -204,10 +205,10 @@ export default class BattleScene extends Phaser.Scene {
 
     create() {
         this.cameraSpeed = 5
-        this.gameData = this.registry.get('gameData');
+        this.gameData = GameData.get();
         this.gameData.levelLoot = [];
         this.gameData.armorLoot = null;
-        this.registry.set('gameData', this.gameData);
+        GameData.set(this.gameData);
         this.critical_chance = 10
         // Настройка камеры
         this.playRandomSoundtrack();
@@ -485,45 +486,7 @@ export default class BattleScene extends Phaser.Scene {
 
         // hero is dead
         if (this.playerHealth <= 0) {
-            this.registry.set('gameData', {
-                levelCount: 1,
-                health: 30,
-                experience: 0,
-                skills: {
-                    small_guns: 75,
-                    big_guns: 75,
-                    energy_weapons: 75,
-                    melee_weapons: 75,
-                    pyrotechnics: 75,
-                    lockpick: 75,
-                    science: 75,
-                    repair: 75,
-                    medcine: 75,
-                    barter: 75,
-                    speech: 75,
-                    surviving: 75
-                },
-                current_weapon: 'Baseball bat',
-                current_armor: 'Leather Jacket',
-                weapons: ['Baseball bat', '9mm pistol'],
-                med: {
-                    first_aid_kit: 0,
-                    jet: 0,
-                    buffout: 0,
-                    mentats: 0,
-                    psycho: 0
-                },
-                ammo: {
-                    mm_9: 500,
-                    magnum_44: 12,
-                    mm_12: 0,
-                    mm_5_45: 0,
-                    energy_cell: 0,
-                    frag_grenade: 0
-                },
-                enemiesToCreate: [],
-                levelLoot: [],
-            });
+            GameData.reset();
             let toRemove = [];
             this.enemies.forEach((enemy, index) => {
                 enemy.healthIndicator.destroy();
@@ -550,7 +513,7 @@ export default class BattleScene extends Phaser.Scene {
         // escape
         if (this.escape_button.visible && Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
             this.gameData.ammo[this.chosenWeapon.type] += this.bullets_in_current_clip
-            this.registry.set('gameData', this.gameData);
+            GameData.set(this.gameData);
             let toRemove = [];
             this.enemies.forEach((enemy, index) => {
                 enemy.healthIndicator.destroy();
@@ -584,7 +547,7 @@ export default class BattleScene extends Phaser.Scene {
                 let best = this.tempLootArmors.sort((a, b) => armorOrder.indexOf(b) - armorOrder.indexOf(a))[0];
                 this.gameData.armorLoot = best;
             }
-            this.registry.set('gameData', this.gameData);
+            GameData.set(this.gameData);
             let toRemove = [];
             this.enemies.forEach((enemy, index) => {
                 enemy.healthIndicator.destroy();
