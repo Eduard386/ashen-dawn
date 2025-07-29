@@ -207,6 +207,9 @@ export default class WorldMapScene extends Phaser.Scene {
 
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
             if (this.selectedButton === 'Yes') {
+                if (this.soundtrack) {
+                    this.soundtrack.stop();
+                }
                 if (['Rat', 'Mantis', 'Cannibals'].includes(this.chosenEnemy.name)) {
                     this.scene.start('BattleScene');
                 } else {
