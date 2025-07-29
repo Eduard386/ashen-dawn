@@ -1,3 +1,5 @@
+import GameData from './utils/GameData.js';
+
 export default class EncounterScene extends Phaser.Scene {
     constructor() {
         super({ key: 'EncounterScene' });
@@ -70,7 +72,7 @@ export default class EncounterScene extends Phaser.Scene {
     }
 
     handleAskAboutThings() {
-        const speechSkill = this.registry.get('gameData').skills.speech;
+        const speechSkill = GameData.get().skills.speech;
 
         if (Phaser.Math.Between(1, 100) <= speechSkill) {
             console.log('Speech check success')
