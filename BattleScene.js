@@ -516,7 +516,9 @@ export default class BattleScene extends Phaser.Scene {
         let toRemove = [];
         this.enemies.forEach((enemy, index) => {
             if (enemy.defence.health <= 0) {
-                this.sound.add(`${enemy.name} - died`).play()
+                if (this.cache.audio.exists(`${enemy.name} - died`)) {
+                    this.sound.add(`${enemy.name} - died`).play();
+                }
                 this.gameData.experience += enemy.experience
                 if (enemy.weaponIndex !== undefined) {
                     this.gameData.levelLoot.push(enemy.weaponIndex);
@@ -1195,7 +1197,9 @@ export default class BattleScene extends Phaser.Scene {
                             enemy_to_hit.defence.health -= Math.round(totalDamage); // Уменьшение здоровья врага
                             this.sound.play(this.chosenWeapon.name + ' - hit');
                             if (enemy_to_hit.defence.health > 0) {
-                                this.sound.play(enemy_to_hit.name + ' - wounded');
+                                if (this.cache.audio.exists(enemy_to_hit.name + ' - wounded')) {
+                                    this.sound.play(enemy_to_hit.name + ' - wounded');
+                                }
                             }
                         }
                     } else {
