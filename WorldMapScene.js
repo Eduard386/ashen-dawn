@@ -47,6 +47,38 @@ export default class WorldMapScene extends Phaser.Scene {
                 title: ['Cannibal man 1', 'Cannibal man 2', 'Cannibal man 3',
                     'Cannibal woman 1', 'Cannibal woman 2']
             },
+            {
+                name: 'Raiders', type: 'human',
+                defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                attack: { hit_chance: 60 },
+                amount: { min: 1, max: 4 }, experience: 75,
+                title: [
+                    'Raider - Leather Jacket - Baseball bat',
+                    'Raider - Leather Jacket - 44 Magnum revolver',
+                    'Raider - Leather Jacket - 9mm pistol',
+                    'Raider - Leather Jacket - 44 Desert Eagle',
+                    'Raider - Leather Jacket - Laser pistol',
+                    'Raider - Leather Jacket - SMG',
+                    'Raider - Leather Jacket - Frag grenade',
+                    'Raider - Leather Jacket - Combat shotgun',
+                    'Raider - Leather Jacket - Laser rifle',
+                    'Raider - Leather Jacket - Minigun',
+                    'Raider - Leather Armor - Baseball bat',
+                    'Raider - Leather Armor - 44 Magnum revolver',
+                    'Raider - Leather Armor - 9mm pistol',
+                    'Raider - Leather Armor - 44 Desert Eagle',
+                    'Raider - Leather Armor - Laser pistol',
+                    'Raider - Leather Armor - SMG',
+                    'Raider - Leather Armor - Combat shotgun',
+                    'Raider - Metal Armor - Baseball bat',
+                    'Raider - Metal Armor - 44 Magnum revolver',
+                    'Raider - Metal Armor - 9mm pistol',
+                    'Raider - Metal Armor - 44 Desert Eagle',
+                    'Raider - Metal Armor - Laser pistol',
+                    'Raider - Metal Armor - SMG',
+                    'Raider - Metal Armor - Combat shotgun'
+                ]
+            },
         ]
     }
 

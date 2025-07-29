@@ -55,9 +55,42 @@ export default class BattleScene extends Phaser.Scene {
                 title: ['Cannibal man 1', 'Cannibal man 2', 'Cannibal man 3',
                     'Cannibal woman 1', 'Cannibal woman 2']
             },
+            {
+                maxLevel: 1, name: 'Raiders', type: 'human',
+                defence: { health: 30, ac: 5, threshold: 0, resistance: 0 },
+                attack: { hit_chance: 60 },
+                amount: { min: 1, max: 4 }, experience: 75,
+                title: [
+                    'Raider - Leather Jacket - Baseball bat',
+                    'Raider - Leather Jacket - 44 Magnum revolver',
+                    'Raider - Leather Jacket - 9mm pistol',
+                    'Raider - Leather Jacket - 44 Desert Eagle',
+                    'Raider - Leather Jacket - Laser pistol',
+                    'Raider - Leather Jacket - SMG',
+                    'Raider - Leather Jacket - Frag grenade',
+                    'Raider - Leather Jacket - Combat shotgun',
+                    'Raider - Leather Jacket - Laser rifle',
+                    'Raider - Leather Jacket - Minigun',
+                    'Raider - Leather Armor - Baseball bat',
+                    'Raider - Leather Armor - 44 Magnum revolver',
+                    'Raider - Leather Armor - 9mm pistol',
+                    'Raider - Leather Armor - 44 Desert Eagle',
+                    'Raider - Leather Armor - Laser pistol',
+                    'Raider - Leather Armor - SMG',
+                    'Raider - Leather Armor - Combat shotgun',
+                    'Raider - Metal Armor - Baseball bat',
+                    'Raider - Metal Armor - 44 Magnum revolver',
+                    'Raider - Metal Armor - 9mm pistol',
+                    'Raider - Metal Armor - 44 Desert Eagle',
+                    'Raider - Metal Armor - Laser pistol',
+                    'Raider - Metal Armor - SMG',
+                    'Raider - Metal Armor - Combat shotgun'
+                ]
+            },
         ]
 
         this.enemies = []
+        this.tempLootArmors = []
 
         // Время последнего выстрела для каждого оружия
         this.lastShotTime = {};
@@ -87,7 +120,7 @@ export default class BattleScene extends Phaser.Scene {
         });
         this.load.image('Raider - Leather Jacket - Baseball bat', 'assets/images/enemies/Raider - Leather Jacket - Baseball bat.png');
         this.load.image('Raider - Leather Jacket - 44 Magnum revolver', 'assets/images/enemies/Raider - Leather Jacket - 44 Magnum revolver.png');
-        this.load.image('Raider - Leather Jacket - 9mm pistol', 'assets/images/enemies/Raider - Leather Jacket - 44 Magnum revolver.png');
+        this.load.image('Raider - Leather Jacket - 9mm pistol', 'assets/images/enemies/Raider - Leather Jacket - 9mm pistol.png');
         this.load.image('Raider - Leather Jacket - 44 Desert Eagle', 'assets/images/enemies/Raider - Leather Jacket - 44 Desert Eagle.png');
         this.load.image('Raider - Leather Jacket - Laser pistol', 'assets/images/enemies/Raider - Leather Jacket - Laser pistol.png');
         this.load.image('Raider - Leather Jacket - SMG', 'assets/images/enemies/Raider - Leather Jacket - SMG.png');
@@ -97,12 +130,12 @@ export default class BattleScene extends Phaser.Scene {
         this.load.image('Raider - Leather Jacket - Minigun', 'assets/images/enemies/Raider - Leather Jacket - Minigun.png');
         this.load.image('Raider - Leather Armor - Baseball bat', 'assets/images/enemies/Raider - Leather Armor - Baseball bat.png');
         this.load.image('Raider - Leather Armor - 44 Magnum revolver', 'assets/images/enemies/Raider - Leather Armor - 44 Magnum revolver.png');
-        this.load.image('Raider - Leather Armor - 9mm pistol', 'assets/images/enemies/Raider - Leather Armor - 44 Magnum revolver.png');
+        this.load.image('Raider - Leather Armor - 9mm pistol', 'assets/images/enemies/Raider - Leather Armor - 9mm pistol.png');
         this.load.image('Raider - Leather Armor - 44 Desert Eagle', 'assets/images/enemies/Raider - Leather Armor - 44 Desert Eagle.png');
         this.load.image('Raider - Leather Armor - Laser pistol', 'assets/images/enemies/Raider - Leather Armor - Laser pistol.png');
         this.load.image('Raider - Leather Armor - SMG', 'assets/images/enemies/Raider - Leather Armor - SMG.png');
         this.load.image('Raider - Metal Armor - Baseball bat', 'assets/images/enemies/Raider - Metal Armor - Baseball bat.png');
-        this.load.image('Raider - Metal Armor - 9mm pistol', 'assets/images/enemies/Raider - Metal Armor - 44 Magnum revolver.png');
+        this.load.image('Raider - Metal Armor - 9mm pistol', 'assets/images/enemies/Raider - Metal Armor - 9mm pistol.png');
         this.load.image('Raider - Metal Armor - 44 Magnum revolver', 'assets/images/enemies/Raider - Metal Armor - 44 Magnum revolver.png');
         this.load.image('Raider - Metal Armor - 44 Desert Eagle', 'assets/images/enemies/Raider - Metal Armor - 44 Desert Eagle.png');
         this.load.image('Raider - Metal Armor - Laser pistol', 'assets/images/enemies/Raider - Metal Armor - Laser pistol.png');
@@ -231,6 +264,9 @@ export default class BattleScene extends Phaser.Scene {
     create() {
         this.cameraSpeed = 5
         this.gameData = this.registry.get('gameData');
+        this.gameData.levelLoot = [];
+        this.gameData.armorLoot = null;
+        this.registry.set('gameData', this.gameData);
         this.critical_chance = 10
         // Настройка камеры
         this.playRandomSoundtrack();
@@ -482,6 +518,12 @@ export default class BattleScene extends Phaser.Scene {
             if (enemy.defence.health <= 0) {
                 this.sound.add(`${enemy.name} - died`).play()
                 this.gameData.experience += enemy.experience
+                if (enemy.weaponIndex !== undefined) {
+                    this.gameData.levelLoot.push(enemy.weaponIndex);
+                }
+                if (enemy.armorName) {
+                    this.tempLootArmors.push(enemy.armorName);
+                }
                 enemy.healthIndicator.destroy();
                 enemy.destroy();
                 toRemove.push(index);
@@ -593,6 +635,12 @@ export default class BattleScene extends Phaser.Scene {
         if (this.enemies.length === 0) {
             this.gameData.ammo[this.chosenWeapon.type] += this.bullets_in_current_clip
             this.gameData.levelCount++
+            // determine best armor from defeated raiders
+            if (this.tempLootArmors.length > 0) {
+                const armorOrder = this.armors.map(a => a.name);
+                let best = this.tempLootArmors.sort((a, b) => armorOrder.indexOf(b) - armorOrder.indexOf(a))[0];
+                this.gameData.armorLoot = best;
+            }
             this.registry.set('gameData', this.gameData);
             let toRemove = [];
             this.enemies.forEach((enemy, index) => {
@@ -889,6 +937,31 @@ export default class BattleScene extends Phaser.Scene {
         //const enemy_obj = this.enemies_all.find(enemy => enemy.name === enemy_name);
         const enemy_obj = this.enemies_all.find(enemy => enemy.title.includes(enemy_name));
         const unique_enemy_obj = JSON.parse(JSON.stringify(enemy_obj));
+
+        // Special handling for Raiders based on their title
+        if (enemy_name.startsWith('Raider')) {
+            const parts = enemy_name.split(' - ');
+            const armorName = parts[1];
+            const weaponName = parts.slice(2).join(' - ');
+
+            const weapon = this.weapons.find(w => w.name === weaponName);
+            if (weapon) {
+                unique_enemy_obj.attack.weapon = weapon.name;
+                unique_enemy_obj.attack.damage = { ...weapon.damage };
+                unique_enemy_obj.attack.shots = weapon.shots;
+                enemy.weaponIndex = this.weapons.indexOf(weapon);
+            }
+
+            const armor = this.armors.find(a => a.name === armorName);
+            if (armor) {
+                unique_enemy_obj.defence.ac = armor.ac;
+                unique_enemy_obj.defence.threshold = armor.threshold;
+                unique_enemy_obj.defence.resistance = armor.resistance;
+            }
+
+            enemy.armorName = armorName;
+            enemy.enemyType = 'Raiders';
+        }
 
         let startPosition = Phaser.Math.Clamp(xPosition, 512, 1536);
         let enemy = this.add.image(startPosition, 330, enemy_name);

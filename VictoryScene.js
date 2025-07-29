@@ -29,6 +29,11 @@ export default class VictoryScene extends Phaser.Scene {
         this.load.image('frag_grenade', 'assets/images/ammo_small/frag_grenade.png');
         this.load.image('energy_cell', 'assets/images/ammo_small/energy_cell.png');
 
+        this.armors = ['Leather Jacket', 'Leather Armor', 'Metal Armor', 'Combat Armor', 'Power Armor'];
+        this.armors.forEach(armor => {
+            this.load.image(armor, 'assets/images/armors/' + armor + '.png');
+        });
+
         this.medcine = ['first_aid_kit', 'jet', 'buffout', 'mentats', 'psycho']
         this.medcine.forEach(med => {
             this.load.image(med, 'assets/images/medcine/colored/' + med + '.png');
@@ -51,17 +56,13 @@ export default class VictoryScene extends Phaser.Scene {
         let lootInfo = {};
 
         // Обработка лута
-        if (this.gameData.levelLoot.includes(2) && this.gameData.current_armor === 'Leather Jacket') {
-            this.gameData.current_armor = 'Leather Armor'
-        }
-        if (this.gameData.levelLoot.includes(3) && this.gameData.current_armor === 'Leather Armor') {
-            this.gameData.current_armor = 'Metal Armor'
-        }
-        if (this.gameData.levelLoot.includes(4) && this.gameData.current_armor === 'Metal Armor') {
-            this.gameData.current_armor = 'Combat Armor'
-        }
-        if (this.gameData.levelLoot.includes(5) && this.gameData.current_armor === 'Combat Armor') {
-            this.gameData.current_armor = 'Power Armor'
+        if (this.gameData.armorLoot) {
+            const currentIndex = this.armors.indexOf(this.gameData.current_armor);
+            const lootIndex = this.armors.indexOf(this.gameData.armorLoot);
+            if (lootIndex > currentIndex) {
+                this.gameData.current_armor = this.gameData.armorLoot;
+            }
+            lootInfo[this.gameData.armorLoot] = 1;
         }
 
         this.gameData.levelLoot.forEach(loot => {
@@ -125,6 +126,7 @@ export default class VictoryScene extends Phaser.Scene {
         });
 
         this.gameData.levelLoot = [];
+        this.gameData.armorLoot = null;
         this.registry.set('gameData', this.gameData);
 
 
