@@ -35,7 +35,7 @@ export class WorldMapScene extends Phaser.Scene {
   private spaceKey?: Phaser.Input.Keyboard.Key;
 
   constructor() {
-    super({ key: 'ModernWorldMapScene' });
+    super({ key: 'WorldMapScene' });
   }
 
   preload(): void {
@@ -278,7 +278,7 @@ export class WorldMapScene extends Phaser.Scene {
     }
     
     // Transition to battle scene
-    this.scene.start('ModernBattleScene', { enemyType });
+    this.scene.start('BattleScene', { enemyType });
   }
 
   private attemptAvoidance(): void {

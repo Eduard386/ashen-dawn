@@ -51,7 +51,7 @@ export class VictoryScene extends Phaser.Scene {
   ];
 
   constructor() {
-    super({ key: 'ModernVictoryScene' });
+    super({ key: 'VictoryScene' });
   }
 
   preload(): void {
@@ -387,7 +387,7 @@ export class VictoryScene extends Phaser.Scene {
     }
     
     // Transition back to world map
-    this.scene.start('ModernWorldMapScene');
+    this.scene.start('WorldMapScene');
   }
 
   private clearBattleData(): void {

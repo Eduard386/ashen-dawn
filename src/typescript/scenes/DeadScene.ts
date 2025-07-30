@@ -22,7 +22,7 @@ export class DeadScene extends Phaser.Scene {
   private enterKey?: Phaser.Input.Keyboard.Key;
 
   constructor() {
-    super({ key: 'ModernDeadScene' });
+    super({ key: 'DeadScene' });
   }
 
   preload(): void {
@@ -202,7 +202,7 @@ export class DeadScene extends Phaser.Scene {
     }
     
     // Return to main menu (game is already reset)
-    this.scene.start('ModernMainMenuScene');
+    this.scene.start('MainMenu');
   }
 
   /**

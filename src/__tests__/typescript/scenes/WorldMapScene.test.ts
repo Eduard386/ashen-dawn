@@ -356,7 +356,7 @@ describe('WorldMapScene', () => {
       const startBattleMethod = (worldMapScene as any).startBattle;
       startBattleMethod.call(worldMapScene, 'Raiders');
       
-      expect((worldMapScene as any).scene.start).toHaveBeenCalledWith('ModernBattleScene', { enemyType: 'Raiders' });
+      expect((worldMapScene as any).scene.start).toHaveBeenCalledWith('BattleScene', { enemyType: 'Raiders' });
     });
   });
 });

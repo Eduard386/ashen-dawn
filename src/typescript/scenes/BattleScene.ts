@@ -18,7 +18,7 @@ export class BattleScene extends Phaser.Scene {
   private actionButtons: Phaser.GameObjects.Container[] = [];
 
   constructor() {
-    super({ key: 'ModernBattleScene' });
+    super({ key: 'BattleScene' });
   }
 
   create(data: { enemyType?: string } = {}) {

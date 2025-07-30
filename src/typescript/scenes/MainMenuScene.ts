@@ -19,7 +19,7 @@ export class MainMenuScene extends Phaser.Scene {
   private enterKey?: Phaser.Input.Keyboard.Key;
 
   constructor() {
-    super({ key: 'ModernMainMenuScene' });
+    super({ key: 'MainMenu' });
   }
 
   preload(): void {
@@ -262,7 +262,7 @@ export class MainMenuScene extends Phaser.Scene {
     services.gameState.saveGame(); // Save current state
     
     // Transition to world map
-    this.scene.start('ModernWorldMapScene');
+    this.scene.start('WorldMapScene');
   }
 
   /**
