@@ -12,6 +12,14 @@ export {
   GameStateService
 } from './core/services';
 
+// Battle System and Scenes
+export { BattleLogic } from './core/BattleLogic';
+export { BattleScene } from './scenes/BattleScene';
+export { WorldMapScene } from './scenes/WorldMapScene';
+export { MainMenuScene } from './scenes/MainMenuScene';
+export { VictoryScene } from './scenes/VictoryScene';
+export { DeadScene } from './scenes/DeadScene';
+
 // Interfaces (re-export for convenience)
 export type {
   IPlayerCharacter,

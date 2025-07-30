@@ -17,6 +17,7 @@ export class GameStateService {
   
   private currentScene: string = 'MainMenu';
   private gameInitialized: boolean = false;
+  private encounterData: { enemyType: string; playerLevel: number } | null = null;
 
   private constructor() {
     this.playerService = PlayerService.getInstance();
@@ -234,5 +235,26 @@ export class GameStateService {
       levelLoot: [],
       armorLoot: null
     };
+  }
+
+  /**
+   * Set encounter data for battle transitions
+   */
+  public setEncounterData(data: { enemyType: string; playerLevel: number }): void {
+    this.encounterData = data;
+  }
+
+  /**
+   * Get encounter data for battle transitions
+   */
+  public getEncounterData(): { enemyType: string; playerLevel: number } | null {
+    return this.encounterData;
+  }
+
+  /**
+   * Clear encounter data after battle
+   */
+  public clearEncounterData(): void {
+    this.encounterData = null;
   }
 }

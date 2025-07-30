@@ -11,6 +11,9 @@ module.exports = {
     '**/__tests__/**/*.spec.(ts|tsx|js)',
     '**/*.(test|spec).(ts|tsx|js)'
   ],
+  moduleNameMapper: {
+    '^phaser$': '<rootDir>/src/__tests__/__mocks__/phaser.ts'
+  },
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
     'src/**/*.{ts,tsx,js,jsx}',
