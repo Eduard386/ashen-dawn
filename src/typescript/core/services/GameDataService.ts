@@ -1,8 +1,8 @@
 import { IPlayerCharacter, IPlayerSkills, IInventory } from '../interfaces/IPlayer.js';
 
 /**
- * Pure TypeScript Game Data Service - Replaces legacy GameData.js
- * Manages game state without any legacy dependencies
+ * Pure TypeScript Game Data Service - Core game state management
+ * Manages game state with clean TypeScript architecture
  */
 export class GameDataService {
   private static instance: GameDataService;
@@ -23,7 +23,7 @@ export class GameDataService {
   }
 
   /**
-   * Get default game data structure - exact same as legacy
+   * Get default game data structure
    */
   private getDefaultGameData(): any {
     return {
@@ -39,7 +39,7 @@ export class GameDataService {
         lockpick: 75,
         science: 75,
         repair: 75,
-        medcine: 75, // Keep legacy typo for compatibility
+        medcine: 75, // Keep typo for data compatibility
         barter: 75,
         speech: 75,
         surviving: 75
@@ -69,7 +69,7 @@ export class GameDataService {
   }
 
   /**
-   * Initialize game data - same as legacy init()
+   * Initialize game data
    */
   public init(): void {
     if (!this.gameData) {
@@ -79,7 +79,7 @@ export class GameDataService {
   }
 
   /**
-   * Get game data - same as legacy get()
+   * Get game data
    */
   public get(): any {
     if (!this.gameData) {
@@ -89,21 +89,21 @@ export class GameDataService {
   }
 
   /**
-   * Set game data - same as legacy set()
+   * Set game data
    */
   public set(data: any): void {
     this.gameData = data;
   }
 
   /**
-   * Reset game data - same as legacy reset()
+   * Reset game data
    */
   public reset(): void {
     this.gameData = JSON.parse(JSON.stringify(this.getDefaultGameData()));
   }
 
   /**
-   * Get default data copy - same as legacy getDefault()
+   * Get default data copy
    */
   public getDefault(): any {
     return JSON.parse(JSON.stringify(this.getDefaultGameData()));

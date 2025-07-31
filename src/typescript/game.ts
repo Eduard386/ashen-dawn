@@ -54,8 +54,8 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
  * 
  * This replaces the legacy JavaScript game.js entirely.
  * All scenes now use modern TypeScript with:
- * - Service layer architecture
- * - LegacyBridge for data access
+ * - Direct service architecture (GameDataService, AssetLoaderService)
+ * - Zero legacy dependencies
  * - Comprehensive error handling
  * - Type safety throughout
  */

@@ -1,6 +1,6 @@
 /**
- * Pure TypeScript Game Data Service - Replaces legacy GameData.js
- * Manages game state without any legacy dependencies
+ * Pure TypeScript Game Data Service - Core game state management
+ * Manages game state with clean TypeScript architecture
  */
 export declare class GameDataService {
     private static instance;
@@ -10,27 +10,27 @@ export declare class GameDataService {
     static getInstance(): GameDataService;
     isInitialized(): boolean;
     /**
-     * Get default game data structure - exact same as legacy
+     * Get default game data structure
      */
     private getDefaultGameData;
     /**
-     * Initialize game data - same as legacy init()
+     * Initialize game data
      */
     init(): void;
     /**
-     * Get game data - same as legacy get()
+     * Get game data
      */
     get(): any;
     /**
-     * Set game data - same as legacy set()
+     * Set game data
      */
     set(data: any): void;
     /**
-     * Reset game data - same as legacy reset()
+     * Reset game data
      */
     reset(): void;
     /**
-     * Get default data copy - same as legacy getDefault()
+     * Get default data copy
      */
     getDefault(): any;
     /**
