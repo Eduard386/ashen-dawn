@@ -47,6 +47,11 @@ export class WorldMapScene extends Phaser.Scene {
       name: "Mantis",
       title: ["Mantis"],
       amount: { min: 1, max: 2 }
+    },
+    {
+      name: "Rats",
+      title: ["Rat"],
+      amount: { min: 3, max: 6 }
     }
   ];
   

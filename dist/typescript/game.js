@@ -2,7 +2,7 @@
 // Note: Phaser is loaded globally via CDN in index.html
 import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { WorldMapScene } from './scenes/WorldMapScene.js';
-import { BattleScene } from './scenes/BattleSceneComplete.js';
+import { BattleScene } from './scenes/BattleScene.js';
 import { DeadScene } from './scenes/DeadScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
 /**
