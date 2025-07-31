@@ -1,8 +1,9 @@
 import { GameDataService } from '../core/services/GameDataService.js';
+import { AssetLoaderService } from '../core/services/AssetLoaderService.js';
 /**
  * Complete Legacy BattleScene - Exact functionality from legacy JS
  * All assets, sounds, weapon switching, combat mechanics restored
- * Now using pure TypeScript GameDataService instead of LegacyBridge
+ * Now using pure TypeScript GameDataService and AssetLoaderService
  */
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -93,87 +94,24 @@ export class BattleScene extends Phaser.Scene {
         this.medical_keys = {};
     }
     preload() {
-        // Battle backgrounds
-        this.load.image("backgroundMain1", "assets/images/backgrounds/battle/backgroundMain1.png");
-        // Armors
-        this.armors.forEach((armor) => {
-            this.load.image("armor " + armor.name, "assets/images/armors/" + armor.name + ".png");
-            this.load.image("armor red " + armor.name, "assets/images/armors_red/" + armor.name + ".png");
-        });
-        // Weapons and hands
-        this.weapons.forEach((weapon) => {
-            this.load.image("weapon " + weapon.name, "assets/images/weapons/" + weapon.name + ".png");
-            this.load.image("hand " + weapon.name, "assets/images/hands/" + weapon.name + ".png");
-        });
-        // All enemies
-        this.enemies_all.forEach((enemy) => {
-            enemy.title.forEach((title) => {
-                console.log(`🖼️ Loading enemy image: ${title}`);
-                this.load.image(title, `assets/images/enemies/${title}.png`);
-            });
-        });
-        // UI elements
-        this.load.image("crosshair_red", "assets/images/crosshairs/crosshair_red.png");
-        this.load.image("crosshair_green", "assets/images/crosshairs/crosshair_green.png");
-        this.load.image("indicator green", "assets/images/health_indicators/green.png");
-        this.load.image("indicator yellow", "assets/images/health_indicators/yellow.png");
-        this.load.image("indicator red", "assets/images/health_indicators/red.png");
-        this.load.image("blood", "assets/images/backgrounds/hit/blood.png");
-        this.load.image("escape", "assets/images/escape_button.png");
-        // Victory images
-        this.load.image("victory_bg", "assets/images/victory/victory.png");
-        // Victory sounds  
-        this.load.audio("victory_sound", "assets/sounds/victory/victory.wav");
-        // Ammo
-        this.load.image("mm_9", "assets/images/ammo_small/mm_9.png");
-        this.load.image("mm_12", "assets/images/ammo_small/mm_12.png");
-        this.load.image("magnum_44", "assets/images/ammo_small/magnum_44.png");
-        this.load.image("mm_5_45", "assets/images/ammo_small/mm_5_45.png");
-        this.load.image("frag_grenade", "assets/images/ammo_small/frag_grenade.png");
-        this.load.image("energy_cell", "assets/images/ammo_small/energy_cell.png");
-        // Medical items
-        const medicine = ["first_aid_kit", "jet", "buffout", "mentats", "psycho"];
-        medicine.forEach((med) => {
-            this.load.image(med, "assets/images/medcine/colored/" + med + ".png");
-            this.load.image(med + " grey", "assets/images/medcine/grey/" + med + ".png");
-        });
-        // Audio - Weapon sounds
-        this.weapons.forEach((weapon) => {
-            this.load.audio(weapon.name + " - hit", `assets/sounds/weapons/${weapon.name} - hit.mp3`);
-            // Multiple miss sounds
-            for (let j = 1; j <= 3; j++) {
-                this.load.audio(weapon.name + " - miss " + j, `assets/sounds/weapons/${weapon.name} - miss ${j}.mp3`);
+        // Assets should already be loaded by AssetLoaderService
+        // Minimal validation of critical battle assets
+        const criticalAssets = ['backgroundMain1', 'crosshair_red', 'breath'];
+        criticalAssets.forEach(asset => {
+            const assetType = asset === 'breath' ? 'audio' : 'image';
+            if (!this.assetLoader?.isAssetLoaded(asset, assetType)) {
+                console.warn(`Battle asset not preloaded: ${asset}`);
             }
         });
-        // Audio - General sounds
-        this.load.audio("breath", "assets/sounds/breath.mp3");
-        this.load.audio("hard_breath", "assets/sounds/hard_breath.mp3");
-        this.load.audio("player wounded", "assets/sounds/player wounded.mp3");
-        this.load.audio("reloading", "assets/sounds/reload.mp3");
-        this.load.audio("sip pill", "assets/sounds/sip_pill.mp3");
-        // Audio - Enemy sounds
-        this.load.audio("Mantis - attack", "assets/sounds/enemies/Mantis - attack.mp3");
-        this.load.audio("Mantis - wounded", "assets/sounds/enemies/Mantis - wounded.mp3");
-        this.load.audio("Mantis - died", "assets/sounds/enemies/Mantis - died.mp3");
-        // Cannibal sounds
-        for (let i = 1; i <= 3; i++) {
-            this.load.audio(`Cannibal man ${i} - wounded`, `assets/sounds/enemies/Cannibal man ${i} - wounded.mp3`);
-            this.load.audio(`Cannibal man ${i} - died`, `assets/sounds/enemies/Cannibal man ${i} - died.mp3`);
-        }
-        for (let i = 1; i <= 2; i++) {
-            this.load.audio(`Cannibal woman ${i} - wounded`, `assets/sounds/enemies/Cannibal woman ${i} - wounded.mp3`);
-            this.load.audio(`Cannibal woman ${i} - died`, `assets/sounds/enemies/Cannibal woman ${i} - died.mp3`);
-        }
-        // Battle background music
-        this.soundtrackNames.forEach((name) => {
-            this.load.audio(name, "assets/sounds/battle_background/" + name + ".mp3");
-        });
+        console.log('🎯 BattleScene: Using preloaded assets from AssetLoaderService');
     }
     create(data = {}) {
-        // Initialize GameDataService
+        // Initialize services
         this.gameDataService = GameDataService.getInstance();
         this.gameDataService.init();
         this.gameData = this.gameDataService.get();
+        this.assetLoader = AssetLoaderService.getInstance();
+        this.assetLoader.init(this);
         // Reset scene-specific flags
         this.isDead = false;
         this.isVictoryTriggered = false;
@@ -242,6 +180,8 @@ export class BattleScene extends Phaser.Scene {
             if (this.escape_button && this.escape_button.visible) {
                 console.log("🏃 Escaping from battle with SHIFT!");
                 this.escape_button.setVisible(false);
+                // ⚡ Effects automatically reset because each battle creates fresh copies of armor/weapon
+                // No need to call resetMedicineEffects() anymore
                 this.stopAllSounds();
                 this.scene.start('WorldMap');
             }
@@ -278,7 +218,9 @@ export class BattleScene extends Phaser.Scene {
     setupPlayerStats() {
         this.playerHealth = this.gameData.health;
         this.maxPlayerHealth = this.gameData.health;
-        this.chosenArmor = this.armors.find(a => a.name === this.gameData.current_armor) || this.armors[0];
+        // Initialize armor (COPY to avoid modifying original data - like legacy)
+        const foundArmor = this.armors.find(a => a.name === this.gameData.current_armor) || this.armors[0];
+        this.chosenArmor = JSON.parse(JSON.stringify(foundArmor)); // Deep copy like legacy
         // Armor display at exact legacy position
         try {
             this.playerRedArmor = this.add.sprite(924, 100, "armor red " + this.chosenArmor.name).setScrollFactor(0);
@@ -293,7 +235,9 @@ export class BattleScene extends Phaser.Scene {
         }
     }
     setupWeapon() {
-        this.chosenWeapon = this.weapons.find(w => w.name === this.gameData.current_weapon) || this.weapons[0];
+        // Initialize weapon (COPY to avoid modifying original data - like legacy)
+        const foundWeapon = this.weapons.find(w => w.name === this.gameData.current_weapon) || this.weapons[0];
+        this.chosenWeapon = JSON.parse(JSON.stringify(foundWeapon)); // Deep copy like legacy
         this.updateWeaponDisplay();
         this.updateAmmoDisplay();
         // Initialize shot timers
@@ -479,6 +423,8 @@ export class BattleScene extends Phaser.Scene {
         if (this.escape_button.visible) {
             console.log("🏃 Escaping from battle!");
             this.escape_button.setVisible(false);
+            // ⚡ Effects automatically reset because each battle creates fresh copies of armor/weapon
+            // No need to call resetMedicineEffects() anymore
             // Stop all sounds
             this.stopAllSounds();
             // Return to world map
@@ -564,7 +510,7 @@ export class BattleScene extends Phaser.Scene {
         // Update armor stats (if affected by medical items)
         if (this.armorStatsText) {
             this.armorStatsText.setStyle(textStyle);
-            this.armorStatsText.setText(`AC: ${this.chosenArmor.ac}\nDT: ${this.chosenArmor.threshold}\nDR: ${Math.round(this.chosenArmor.resistance * 100)}%`);
+            this.armorStatsText.setText(`AC: ${this.chosenArmor.ac}\nDT: ${this.chosenArmor.threshold}\nResistance: ${Math.round(this.chosenArmor.resistance * 100)}%`);
         }
         // Update weapon stats - единый стиль
         if (this.weaponStatsText) {
@@ -737,25 +683,51 @@ export class BattleScene extends Phaser.Scene {
         const isHit = Math.random() * 100 < hitChance;
         console.log(`👹 ${enemy.name} attacks! Hit: ${isHit}`);
         if (isHit) {
-            const damage = Math.floor(Math.random() * 10) + 5; // Simple damage
-            this.playerHealth -= damage;
-            console.log(`💔 Player takes ${damage} damage! HP: ${this.playerHealth}`);
-            // Play wounded sound
-            try {
-                this.sound.play("player wounded", { volume: 0.6 });
+            // Check if armor blocks the attack (AC check)
+            const acCheck = Math.random() * 100;
+            if (acCheck > this.chosenArmor.ac) {
+                // Armor failed to block, calculate damage
+                let totalDamage = 0;
+                for (let shot = 0; shot < (enemy.attack?.shots || 1); shot++) {
+                    totalDamage += Math.floor(Math.random() * 10) + 5; // Enemy damage range
+                }
+                // Apply armor damage reduction (EXACT legacy logic)
+                totalDamage -= this.chosenArmor.threshold; // Subtract threshold
+                totalDamage = Math.max(totalDamage, 0); // Damage can't be negative
+                totalDamage = Math.floor(totalDamage * (1 - this.chosenArmor.resistance)); // Apply resistance
+                if (totalDamage > 0) {
+                    this.playerHealth -= totalDamage;
+                    console.log(`💔 Player takes ${totalDamage} damage! HP: ${this.playerHealth}`);
+                    // Play wounded sound
+                    try {
+                        this.sound.play("player wounded", { volume: 0.6 });
+                    }
+                    catch (error) { }
+                    // Visual effects
+                    this.cameras.main.shake(200, 0.01);
+                    this.updateHealthMask();
+                    this.updateStatsDisplay(); // Update HP display immediately
+                    // Play enemy attack sound (HIT version - like legacy)
+                    this.playEnemyAttackSound(enemy, true);
+                }
+                else {
+                    console.log(`🛡️ Armor absorbed all damage!`);
+                }
             }
-            catch (error) { }
-            // Visual effect
-            this.cameras.main.shake(200, 0.01);
-            this.updateHealthMask();
+            else {
+                console.log(`🛡️ Armor deflected the attack! (AC: ${this.chosenArmor.ac})`);
+            }
             // Check death
             if (this.playerHealth <= 0) {
                 this.playerDeath();
                 return; // Exit immediately to prevent further processing
             }
         }
-        // Play enemy attack sound
-        this.playEnemySound(enemy.name, "attack");
+        else {
+            console.log(`👹 ${enemy.name} missed!`);
+            // Play enemy attack sound (MISS version - like legacy)
+            this.playEnemyAttackSound(enemy, false);
+        }
         enemy.canAttack = false;
         this.time.delayedCall(3000, () => {
             enemy.canAttack = true;
@@ -770,6 +742,36 @@ export class BattleScene extends Phaser.Scene {
         }
         catch (error) {
             console.log(`Enemy sound not available: ${soundKey}`);
+        }
+    }
+    playEnemyAttackSound(enemy, isHit) {
+        // Try weapon-specific attack sounds first (like legacy)
+        if (enemy.attack?.weapon) {
+            const attackKey = enemy.attack.weapon + " - attack";
+            if (this.cache.audio.exists(attackKey)) {
+                this.sound.play(attackKey, { volume: 0.5 });
+                return;
+            }
+            // Try hit/miss sounds for weapons
+            if (isHit) {
+                const hitKey = enemy.attack.weapon + " - hit";
+                if (this.cache.audio.exists(hitKey)) {
+                    this.sound.play(hitKey, { volume: 0.5 });
+                    return;
+                }
+            }
+            else {
+                const missKey = enemy.attack.weapon + " - miss " + Math.floor(Math.random() * 3 + 1);
+                if (this.cache.audio.exists(missKey)) {
+                    this.sound.play(missKey, { volume: 0.5 });
+                    return;
+                }
+            }
+        }
+        // Fallback to enemy-specific attack sound (like legacy)
+        const fallbackKey = enemy.name + " - attack";
+        if (this.cache.audio.exists(fallbackKey)) {
+            this.sound.play(fallbackKey, { volume: 0.5 });
         }
     }
     switchWeapon(direction) {
@@ -789,7 +791,8 @@ export class BattleScene extends Phaser.Scene {
             newIndex = availableWeapons.length - 1;
         if (newIndex >= availableWeapons.length)
             newIndex = 0;
-        this.chosenWeapon = availableWeapons[newIndex];
+        // Create a copy of the weapon (like legacy)
+        this.chosenWeapon = JSON.parse(JSON.stringify(availableWeapons[newIndex]));
         this.gameData.current_weapon = this.chosenWeapon.name;
         this.updateWeaponDisplay();
         this.updateStatsDisplay(); // Update weapon stats display
@@ -927,6 +930,8 @@ export class BattleScene extends Phaser.Scene {
             return; // Prevent multiple victory calls
         this.isVictoryTriggered = true;
         console.log("🎉 Victory! All enemies defeated!");
+        // ⚡ Effects automatically reset because each battle creates fresh copies of armor/weapon
+        // No need to call resetMedicineEffects() anymore
         // Stop only background sounds, let weapon/enemy sounds finish naturally
         if (this.soundtrack) {
             this.soundtrack.stop();
@@ -1075,6 +1080,8 @@ export class BattleScene extends Phaser.Scene {
         }
         // Wait a moment for death sound to start, then transition to DeadScene
         this.time.delayedCall(1000, () => {
+            // ⚡ Effects automatically reset because each battle creates fresh copies of armor/weapon
+            // No need to call resetMedicineEffects() anymore
             // Reset health for restart
             this.gameDataService.setHealth(30);
             // Transition to proper DeadScene
@@ -1091,7 +1098,7 @@ export class BattleScene extends Phaser.Scene {
     }
     handleMedicalInputs() {
         if (Phaser.Input.Keyboard.JustDown(this.medical_keys.first_aid_kit)) {
-            this.useMedicalItem('first_aid_kit', 25);
+            this.useMedicalItem('first_aid_kit', 0); // healAmount will be calculated inside
         }
         if (Phaser.Input.Keyboard.JustDown(this.medical_keys.jet)) {
             this.useMedicalItem('jet', 0);
@@ -1120,42 +1127,80 @@ export class BattleScene extends Phaser.Scene {
             // Apply medical effects
             switch (itemName) {
                 case 'first_aid_kit':
-                    // Heal health
+                    // EXACT legacy healing: random 10-20 HP
                     if (this.playerHealth < this.maxPlayerHealth) {
+                        const healAmount = Phaser.Math.Between(10, 20);
                         this.playerHealth = Math.min(this.maxPlayerHealth, this.playerHealth + healAmount);
+                        console.log(`💊 First Aid Kit: healed ${healAmount} HP`);
                         this.updateHealthMask();
                         this.updateStatsDisplay(); // Update displayed health
                     }
                     break;
                 case 'jet':
-                    // Increase critical chance temporarily
-                    this.gameData.critical_chance = (this.gameData.critical_chance || 5) + 10;
-                    console.log(`🎯 Critical chance increased to ${this.gameData.critical_chance}%`);
-                    this.updateStatsDisplay(); // Update displayed crit chance
+                    // EXACT legacy: cooldown -25%, enemy speed +4s
+                    this.chosenWeapon.cooldown *= 0.75;
+                    this.enemies.forEach((enemy) => {
+                        enemy.speed = (enemy.speed || 0) + 4000;
+                    });
+                    console.log(`💨 Jet: cooldown -25%, enemy speed +4s`);
+                    this.updateStatsDisplay();
                     break;
                 case 'buffout':
-                    // Increase damage resistance temporarily
-                    if (this.chosenArmor) {
-                        this.chosenArmor.resistance = Math.min(0.9, this.chosenArmor.resistance + 0.2);
-                        console.log(`🛡️ Damage resistance increased to ${Math.round(this.chosenArmor.resistance * 100)}%`);
-                        this.updateStatsDisplay(); // Update displayed DR
-                    }
+                    // EXACT legacy: damage +25%, threshold +2, resistance +25%
+                    this.chosenWeapon.damage.min *= 1.25;
+                    this.chosenWeapon.damage.max *= 1.25;
+                    this.chosenArmor.threshold += 2;
+                    this.chosenArmor.resistance += 0.25;
+                    console.log(`� Buffout: damage +25%, threshold +2, resistance +25%`);
+                    this.updateStatsDisplay();
                     break;
                 case 'mentats':
-                    // Increase critical chance (different from jet)
+                    // EXACT legacy: AC +10, critical +5%
+                    this.chosenArmor.ac += 10;
                     this.gameData.critical_chance = (this.gameData.critical_chance || 5) + 5;
-                    console.log(`🧠 Critical chance increased to ${this.gameData.critical_chance}%`);
-                    this.updateStatsDisplay(); // Update displayed crit chance
+                    console.log(`🧠 Mentats: AC +10, critical +5%`);
+                    this.updateStatsDisplay();
                     break;
                 case 'psycho':
-                    // Increase weapon damage temporarily
-                    this.chosenWeapon.damage.min += 5;
-                    this.chosenWeapon.damage.max += 5;
-                    console.log(`💀 Weapon damage increased: ${this.chosenWeapon.damage.min}-${this.chosenWeapon.damage.max}`);
-                    this.updateStatsDisplay(); // Update displayed weapon damage
+                    // EXACT legacy: damage +10%, threshold +1, resistance +10%, AC +5, critical +3%, enemy speed +2s
+                    this.chosenWeapon.damage.min *= 1.1;
+                    this.chosenWeapon.damage.max *= 1.1;
+                    this.chosenArmor.threshold += 1;
+                    this.chosenArmor.resistance += 0.1;
+                    this.chosenArmor.ac += 5;
+                    this.gameData.critical_chance = (this.gameData.critical_chance || 5) + 3;
+                    this.enemies.forEach((enemy) => {
+                        enemy.speed = (enemy.speed || 0) + 2000;
+                    });
+                    console.log(`😈 Psycho: damage +10%, threshold +1, resistance +10%, AC +5, critical +3%, enemy speed +2s`);
+                    this.updateStatsDisplay();
                     break;
             }
         }
+    }
+    /**
+     * Reset all medicine effects after battle
+     */
+    resetMedicineEffects() {
+        console.log("💊 Resetting all medicine effects after battle");
+        // Reset armor to base values (reload from original data)
+        const originalArmor = this.armors.find(a => a.name === this.gameData.current_armor);
+        if (originalArmor) {
+            this.chosenArmor.ac = originalArmor.ac;
+            this.chosenArmor.threshold = originalArmor.threshold;
+            this.chosenArmor.resistance = originalArmor.resistance;
+        }
+        // Reset weapon to base values (reload from original data)
+        const originalWeapon = this.weapons.find(w => w.name === this.gameData.current_weapon);
+        if (originalWeapon) {
+            this.chosenWeapon.damage.min = originalWeapon.damage.min;
+            this.chosenWeapon.damage.max = originalWeapon.damage.max;
+            this.chosenWeapon.cooldown = originalWeapon.cooldown;
+        }
+        // Reset critical chance to base value
+        this.gameData.critical_chance = 5; // Default critical chance
+        console.log("✅ All medicine effects reset to default values");
+        this.updateStatsDisplay(); // Update display with reset values
     }
     updateMedicalItemVisibility() {
         const medData = this.gameData.med;

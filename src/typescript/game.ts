@@ -1,5 +1,6 @@
 // src/typescript/game.ts - Modern TypeScript Game Entry Point
 // Note: Phaser is loaded globally via CDN in index.html
+import { LoadingScene } from './scenes/LoadingScene.js';
 import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { WorldMapScene } from './scenes/WorldMapScene.js';
 import { BattleScene } from './scenes/BattleScene.js';
@@ -29,12 +30,12 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
         }
     },
     scene: [
+        LoadingScene,     // Asset loading with progress
         MainMenuScene,    // Modern TypeScript entry point
         WorldMapScene,    // Modern TypeScript travel system
         BattleScene,      // Modern TypeScript combat system
         VictoryScene,     // Modern TypeScript loot processing
         DeadScene         // Modern TypeScript game over handling
-        // EncounterScene - Legacy version still available if needed
     ],
     scale: {
         mode: Phaser.Scale.FIT,

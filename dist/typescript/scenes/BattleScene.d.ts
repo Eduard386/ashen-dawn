@@ -1,10 +1,11 @@
 /**
  * Complete Legacy BattleScene - Exact functionality from legacy JS
  * All assets, sounds, weapon switching, combat mechanics restored
- * Now using pure TypeScript GameDataService instead of LegacyBridge
+ * Now using pure TypeScript GameDataService and AssetLoaderService
  */
 export declare class BattleScene extends Phaser.Scene {
     private gameDataService;
+    private assetLoader;
     private gameData;
     private soundtrackNames;
     private weapons;
@@ -91,6 +92,7 @@ export declare class BattleScene extends Phaser.Scene {
     private updateEnemies;
     private enemyAttack;
     private playEnemySound;
+    private playEnemyAttackSound;
     private switchWeapon;
     private performAttack;
     private playWeaponSound;
@@ -99,6 +101,10 @@ export declare class BattleScene extends Phaser.Scene {
     private playerDeath;
     private handleMedicalInputs;
     private useMedicalItem;
+    /**
+     * Reset all medicine effects after battle
+     */
+    private resetMedicineEffects;
     private updateMedicalItemVisibility;
     private updateItemVisibility;
     private updateHealthMask;

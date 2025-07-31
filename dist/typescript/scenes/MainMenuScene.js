@@ -1,23 +1,30 @@
 // Note: Phaser is loaded globally via CDN in index.html
 import { GameDataService } from '../core/services/GameDataService.js';
+import { AssetLoaderService } from '../core/services/AssetLoaderService.js';
 /**
  * Modern TypeScript MainMenuScene - Game entry point
  * Handles game initialization, level display, and world map transition
- * Now using pure TypeScript GameDataService instead of LegacyBridge
+ * Now using pure TypeScript GameDataService and AssetLoaderService
  */
 export class MainMenuScene extends Phaser.Scene {
     constructor() {
         super({ key: 'MainMenu' });
     }
     preload() {
-        // Load menu background
-        this.load.image('background_menu', 'assets/images/backgrounds/menu/menu.png');
+        // No preloading needed - assets are handled by AssetLoaderService
+        // Only check if critical assets are available
+        const bgAsset = this.assetLoader?.getAssetWithFallback('background_menu');
+        if (!bgAsset) {
+            console.warn('Background asset not available, using fallback');
+        }
     }
     create() {
         console.log('🎮 Modern MainMenuScene initialized with TypeScript services');
-        // Initialize GameDataService
+        // Initialize services
         this.gameDataService = GameDataService.getInstance();
         this.gameDataService.init();
+        this.assetLoader = AssetLoaderService.getInstance();
+        this.assetLoader.init(this);
         // Create background
         this.createBackground();
         // Create UI elements
@@ -30,9 +37,19 @@ export class MainMenuScene extends Phaser.Scene {
         this.updateUI();
     }
     createBackground() {
-        // Full screen background
-        this.background = this.add.image(512, 384, 'background_menu');
-        this.background.setScale(1024 / this.background.width, 768 / this.background.height);
+        // Use asset with fallback
+        const bgAsset = this.assetLoader.getAssetWithFallback('background_menu');
+        if (bgAsset) {
+            this.background = this.add.image(512, 384, bgAsset);
+            this.background.setScale(1024 / this.background.width, 768 / this.background.height);
+        }
+        else {
+            // Fallback: create a gradient background
+            const graphics = this.add.graphics();
+            graphics.fillGradientStyle(0x0a0a0a, 0x0a0a0a, 0x2a2a2a, 0x2a2a2a, 1);
+            graphics.fillRect(0, 0, 1024, 768);
+            console.log('Using fallback gradient background');
+        }
     }
     createUI() {
         // Game title

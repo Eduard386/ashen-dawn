@@ -3,6 +3,8 @@ export { CombatService } from './CombatService';
 export { WeaponService } from './WeaponService';
 export { EnemyService } from './EnemyService';
 export { GameStateService } from './GameStateService';
+export { GameDataService } from './GameDataService';
+export { AssetLoaderService } from './AssetLoaderService';
 export type { IPlayerCharacter, IPlayerSkills, IInventory } from '../interfaces/IPlayer';
 export type { IWeapon } from '../interfaces/IWeapon';
 export type { IEnemy } from '../interfaces/IEnemy';

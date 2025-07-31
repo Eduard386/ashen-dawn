@@ -1,12 +1,14 @@
-import { LegacyBridge } from './core/bridges/LegacyBridge.js';
+import game from './game.js';
+export default game;
 export { PlayerService, CombatService, WeaponService, EnemyService, GameStateService } from './core/services';
-export { BattleLogic } from './core/BattleLogic';
+export { AssetLoaderService } from './core/services/AssetLoaderService';
+export { GameDataService } from './core/services/GameDataService';
+export { LoadingScene } from './scenes/LoadingScene';
 export { MainMenuScene } from './scenes/MainMenuScene';
+export { WorldMapScene } from './scenes/WorldMapScene';
+export { BattleScene } from './scenes/BattleScene';
+export { VictoryScene } from './scenes/VictoryScene';
+export { DeadScene } from './scenes/DeadScene';
 export type { IPlayerCharacter, IPlayerSkills, IInventory, IWeapon, IEnemy, ICombatResult, IDamageCalculation } from './core/services';
 export type { SceneName, SkillType, WeaponSkillType, AmmoType, EnemyType, MedicalItemType, IDamageRange, CombatResult, LootReward } from './core/services';
-export { LegacyBridge };
-/**
- * Initialize the TypeScript game services
- * This function should be called from the legacy JavaScript code
- */
-export declare function initializeGameServices(legacyGameData?: any): LegacyBridge;
+export type { AssetProgress, AssetManifest } from './core/services/AssetLoaderService';

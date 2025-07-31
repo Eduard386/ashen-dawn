@@ -1,10 +1,11 @@
 /**
  * Modern TypeScript MainMenuScene - Game entry point
  * Handles game initialization, level display, and world map transition
- * Now using pure TypeScript GameDataService instead of LegacyBridge
+ * Now using pure TypeScript GameDataService and AssetLoaderService
  */
 export declare class MainMenuScene extends Phaser.Scene {
     private gameDataService;
+    private assetLoader;
     private background?;
     private startButton?;
     private levelText?;

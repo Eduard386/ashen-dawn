@@ -1,13 +1,15 @@
 // Note: Phaser is loaded globally via CDN in index.html
 import { GameDataService } from '../core/services/GameDataService.js';
+import { AssetLoaderService } from '../core/services/AssetLoaderService.js';
 
 /**
  * TypeScript WorldMapScene - EXACT legacy visual style
  * Matches the original JavaScript WorldMapScene precisely
- * Now using pure TypeScript GameDataService instead of LegacyBridge
+ * Now using pure TypeScript GameDataService and AssetLoaderService
  */
 export class WorldMapScene extends Phaser.Scene {
   private gameDataService!: GameDataService;
+  private assetLoader!: AssetLoaderService;
   private gameData: any;
   
   // EXACT legacy properties
@@ -71,31 +73,48 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // EXACT legacy asset loading
-    this.soundtrackNames.forEach((name) => {
-      this.load.audio(name, "assets/sounds/battle_background/" + name + ".mp3");
+    // Assets should already be loaded by AssetLoaderService
+    // Just verify critical assets are available
+    const requiredAssets = [
+      { key: 'road', type: 'video' as const },
+      { key: 'yes', type: 'image' as const },
+      { key: 'no', type: 'image' as const },
+      { key: 'travel', type: 'audio' as const }
+    ];
+    
+    requiredAssets.forEach(({ key, type }) => {
+      if (!this.assetLoader?.isAssetLoaded(key, type)) {
+        console.warn(`WorldMap asset not preloaded: ${key}`);
+      }
     });
-    this.load.audio("travel", "assets/psychobilly.mp3");
-    this.load.video("road", "assets/road.mp4");
-    this.load.image("yes", "assets/images/yes.png");
-    this.load.image("no", "assets/images/no.png");
   }
 
   create(): void {
     // Stop all sounds from previous scenes (victory music, battle sounds, etc.)
     this.sound.stopAll();
     
-    // Initialize GameDataService
+    // Initialize services
     this.gameDataService = GameDataService.getInstance();
     this.gameDataService.init();
     this.gameData = this.gameDataService.get();
+    
+    this.assetLoader = AssetLoaderService.getInstance();
+    this.assetLoader.init(this);
 
     // EXACT legacy soundtrack
     this.playRandomSoundtrack();
 
     // EXACT legacy video background
-    const video = this.add.video(0, 0, "road").setOrigin(0);
-    video.play(true); // true = loop
+    const roadAsset = this.assetLoader.getAssetWithFallback('road', undefined, 'video');
+    if (roadAsset) {
+      const video = this.add.video(0, 0, roadAsset).setOrigin(0);
+      video.play(true); // true = loop
+    } else {
+      // Fallback background
+      const graphics = this.add.graphics();
+      graphics.fillGradientStyle(0x4a4a4a, 0x4a4a4a, 0x2a2a2a, 0x2a2a2a, 1);
+      graphics.fillRect(0, 0, 1024, 600);
+    }
 
     // EXACT legacy input setup
     this.cursors = this.input.keyboard!.createCursorKeys();
@@ -129,8 +148,9 @@ export class WorldMapScene extends Phaser.Scene {
   private playRandomSoundtrack(): void {
     // EXACT legacy soundtrack logic with fallback for missing assets
     try {
-      if (this.cache.audio.exists("travel")) {
-        this.soundtrack = this.sound.add("travel");
+      const travelAsset = this.assetLoader.getAssetWithFallback('travel', undefined, 'audio');
+      if (travelAsset) {
+        this.soundtrack = this.sound.add(travelAsset);
         this.soundtrack.play();
 
         this.soundtrack.once("complete", () => {
@@ -190,13 +210,16 @@ export class WorldMapScene extends Phaser.Scene {
     this.popupText.setScrollFactor(0);
 
     // Buttons
+    const yesAsset = this.assetLoader.getAssetWithFallback('yes');
+    const noAsset = this.assetLoader.getAssetWithFallback('no');
+    
     this.yesButton = this.add
-      .image(cameraCenterX - 50, cameraCenterY + 50, "yes")
+      .image(cameraCenterX - 50, cameraCenterY + 50, yesAsset || 'yes')
       .setInteractive();
     this.yesButton.setScrollFactor(0);
 
     this.noButton = this.add
-      .image(cameraCenterX + 50, cameraCenterY + 50, "no")
+      .image(cameraCenterX + 50, cameraCenterY + 50, noAsset || 'no')
       .setInteractive();
     this.noButton.setScrollFactor(0);
 

@@ -1,10 +1,11 @@
 /**
  * TypeScript WorldMapScene - EXACT legacy visual style
  * Matches the original JavaScript WorldMapScene precisely
- * Now using pure TypeScript GameDataService instead of LegacyBridge
+ * Now using pure TypeScript GameDataService and AssetLoaderService
  */
 export declare class WorldMapScene extends Phaser.Scene {
     private gameDataService;
+    private assetLoader;
     private gameData;
     private popupActive;
     private selectedButton;
