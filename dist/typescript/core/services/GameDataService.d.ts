@@ -5,8 +5,10 @@
 export declare class GameDataService {
     private static instance;
     private gameData;
+    private initialized;
     private constructor();
     static getInstance(): GameDataService;
+    isInitialized(): boolean;
     /**
      * Get default game data structure - exact same as legacy
      */

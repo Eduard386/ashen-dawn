@@ -7,6 +7,7 @@ import { IPlayerCharacter, IPlayerSkills, IInventory } from '../interfaces/IPlay
 export class GameDataService {
   private static instance: GameDataService;
   private gameData: any = null;
+  private initialized: boolean = false;
 
   private constructor() {}
 
@@ -15,6 +16,10 @@ export class GameDataService {
       GameDataService.instance = new GameDataService();
     }
     return GameDataService.instance;
+  }
+
+  public isInitialized(): boolean {
+    return this.initialized;
   }
 
   /**
@@ -69,6 +74,7 @@ export class GameDataService {
   public init(): void {
     if (!this.gameData) {
       this.gameData = JSON.parse(JSON.stringify(this.getDefaultGameData()));
+      this.initialized = true;
     }
   }
 

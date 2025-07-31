@@ -5,12 +5,16 @@
 export class GameDataService {
     constructor() {
         this.gameData = null;
+        this.initialized = false;
     }
     static getInstance() {
         if (!GameDataService.instance) {
             GameDataService.instance = new GameDataService();
         }
         return GameDataService.instance;
+    }
+    isInitialized() {
+        return this.initialized;
     }
     /**
      * Get default game data structure - exact same as legacy
@@ -63,6 +67,7 @@ export class GameDataService {
     init() {
         if (!this.gameData) {
             this.gameData = JSON.parse(JSON.stringify(this.getDefaultGameData()));
+            this.initialized = true;
         }
     }
     /**
