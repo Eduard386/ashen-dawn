@@ -1,0 +1,2 @@
+import './typescript/game';
+export {};

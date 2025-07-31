@@ -1,4 +1,4 @@
-import { IWeapon } from '../interfaces/IWeapon';
+import { IWeapon } from '../interfaces/IWeapon.js';
 import { SkillType, AmmoType } from '../types/GameTypes';
 
 /**
@@ -129,7 +129,7 @@ export class WeaponService {
         name: 'knife',
         skill: 'melee_weapons',
         ammoType: 'melee',
-        cooldown: 2000,
+        cooldown: 800,
         damage: { min: 1, max: 6 },
         clipSize: 1000,
         shotsPerAttack: 1,

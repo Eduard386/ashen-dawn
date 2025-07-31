@@ -1,7 +1,7 @@
 // Main TypeScript entry point for the game
 // This bridges the legacy JavaScript code with new TypeScript services
 
-import { LegacyBridge } from './core/bridges/LegacyBridge';
+import { LegacyBridge } from './core/bridges/LegacyBridge.js';
 
 // Services (re-export for convenience)
 export {
@@ -14,11 +14,11 @@ export {
 
 // Battle System and Scenes
 export { BattleLogic } from './core/BattleLogic';
-export { BattleScene } from './scenes/BattleScene';
-export { WorldMapScene } from './scenes/WorldMapScene';
+// export { BattleScene } from './scenes/BattleScene';
+// export { WorldMapScene } from './scenes/WorldMapScene';
 export { MainMenuScene } from './scenes/MainMenuScene';
-export { VictoryScene } from './scenes/VictoryScene';
-export { DeadScene } from './scenes/DeadScene';
+// export { VictoryScene } from './scenes/VictoryScene';
+// export { DeadScene } from './scenes/DeadScene';
 
 // Interfaces (re-export for convenience)
 export type {

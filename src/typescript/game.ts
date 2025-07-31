@@ -1,7 +1,8 @@
 // src/typescript/game.ts - Modern TypeScript Game Entry Point
+// Note: Phaser is loaded globally via CDN in index.html
 import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { WorldMapScene } from './scenes/WorldMapScene.js';
-import { BattleScene } from './scenes/BattleScene.js';
+import { BattleScene } from './scenes/BattleSceneComplete.js';
 import { DeadScene } from './scenes/DeadScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
 
@@ -32,7 +33,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
         WorldMapScene,    // Modern TypeScript travel system
         BattleScene,      // Modern TypeScript combat system
         VictoryScene,     // Modern TypeScript loot processing
-        DeadScene        // Modern TypeScript game over handling
+        DeadScene         // Modern TypeScript game over handling
         // EncounterScene - Legacy version still available if needed
     ],
     scale: {
@@ -68,9 +69,7 @@ window.addEventListener('error', (event) => {
 });
 
 // Performance monitoring (development only)
-if (process.env.NODE_ENV === 'development') {
-    // @ts-ignore
-    window.game = game;
-    console.log('🎮 Modern TypeScript Ashen Dawn initialized successfully!');
-    console.log('🔧 Development mode: Game object available as window.game');
-}
+// @ts-ignore
+window.game = game;
+console.log('🎮 Modern TypeScript Ashen Dawn initialized successfully!');
+console.log('🔧 Development mode: Game object available as window.game');

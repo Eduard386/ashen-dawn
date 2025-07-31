@@ -1,4 +1,4 @@
-import { GameStateService } from '../services/GameStateService';
+import { GameStateService } from '../services/GameStateService.js';
 
 /**
  * Legacy Bridge - Provides compatibility layer between legacy JS code and TypeScript services

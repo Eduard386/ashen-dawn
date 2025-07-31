@@ -1,0 +1,10 @@
+export { PlayerService } from './PlayerService';
+export { CombatService } from './CombatService';
+export { WeaponService } from './WeaponService';
+export { EnemyService } from './EnemyService';
+export { GameStateService } from './GameStateService';
+export type { IPlayerCharacter, IPlayerSkills, IInventory } from '../interfaces/IPlayer';
+export type { IWeapon } from '../interfaces/IWeapon';
+export type { IEnemy } from '../interfaces/IEnemy';
+export type { ICombatResult, IDamageCalculation } from '../interfaces/ICombat';
+export type { SceneName, SkillType, WeaponSkillType, AmmoType, EnemyType, MedicalItemType, IDamageRange, CombatResult, LootReward } from '../types/GameTypes';

@@ -1,4 +1,4 @@
-import { IEnemy } from '../interfaces/IEnemy';
+import { IEnemy } from '../interfaces/IEnemy.js';
 import { EnemyType } from '../types/GameTypes';
 
 /**

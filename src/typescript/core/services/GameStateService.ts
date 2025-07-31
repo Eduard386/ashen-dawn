@@ -1,8 +1,8 @@
-import { IPlayerCharacter } from '../interfaces/IPlayer';
-import { PlayerService } from './PlayerService';
-import { WeaponService } from './WeaponService';
-import { EnemyService } from './EnemyService';
-import { CombatService } from './CombatService';
+import { IPlayerCharacter } from '../interfaces/IPlayer.js';
+import { PlayerService } from './PlayerService.js';
+import { WeaponService } from './WeaponService.js';
+import { EnemyService } from './EnemyService.js';
+import { CombatService } from './CombatService.js';
 
 /**
  * Game State Service - Central state management

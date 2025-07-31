@@ -1,5 +1,5 @@
-import * as Phaser from 'phaser';
-import { LegacyBridge } from '../core/bridges/LegacyBridge';
+// Note: Phaser is loaded globally via CDN in index.html
+import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
 
 /**
  * Modern TypeScript DeadScene - Game over screen
@@ -33,6 +33,28 @@ export class DeadScene extends Phaser.Scene {
 
   create(): void {
     console.log('💀 Modern DeadScene initialized - Game Over');
+    
+    // FORCEFULLY stop ALL sounds from previous scenes including breathing sounds
+    this.sound.stopAll();
+    
+    // Additional forced stop for specific sounds that might persist
+    try {
+      const breathSound = this.sound.get('breath');
+      const hardBreathSound = this.sound.get('hard_breath');
+      if (breathSound) {
+        breathSound.stop();
+        breathSound.destroy();
+      }
+      if (hardBreathSound) {
+        hardBreathSound.stop();
+        hardBreathSound.destroy();
+      }
+    } catch (error) {
+      // Ignore if sounds don't exist
+    }
+    
+    // Stop all sounds from previous scenes (breathing, battle sounds, etc.)
+    this.sound.stopAll();
     
     // Initialize bridge
     this.bridge = LegacyBridge.getInstance();

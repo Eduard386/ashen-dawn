@@ -1,5 +1,5 @@
-import * as Phaser from 'phaser';
-import { LegacyBridge } from '../core/bridges/LegacyBridge';
+// Note: Phaser is loaded globally via CDN in index.html
+import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
 
 /**
  * Modern TypeScript MainMenuScene - Game entry point
@@ -13,6 +13,7 @@ export class MainMenuScene extends Phaser.Scene {
   private startButton?: Phaser.GameObjects.Text;
   private levelText?: Phaser.GameObjects.Text;
   private instructionText?: Phaser.GameObjects.Text;
+
   
   // Input
   private spaceKey?: Phaser.Input.Keyboard.Key;
@@ -52,7 +53,7 @@ export class MainMenuScene extends Phaser.Scene {
   update(): void {
     // Update level display in real-time
     this.updateDisplay();
-    
+
     // Handle keyboard input
     if (this.spaceKey && Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
       this.startGame();
@@ -65,7 +66,7 @@ export class MainMenuScene extends Phaser.Scene {
 
   private createBackground(): void {
     try {
-      this.background = this.add.image(0, 0, 'background_menu').setOrigin(0, 0);
+    this.background = this.add.image(0, 0, 'background_menu').setOrigin(0, 0);
     } catch (error) {
       // Fallback if background fails to load
       console.warn('Menu background failed to load, using fallback');
@@ -99,7 +100,7 @@ export class MainMenuScene extends Phaser.Scene {
       fontFamily: 'monospace',
       backgroundColor: 'rgba(0,0,0,0.5)',
       padding: { x: 20, y: 10 }
-    })
+      })
       .setOrigin(0.5)
       .setInteractive()
       .on('pointerdown', () => this.startGame())
@@ -156,8 +157,8 @@ export class MainMenuScene extends Phaser.Scene {
       fontFamily: 'monospace',
       backgroundColor: 'rgba(0,0,0,0.7)',
       padding: { x: 10, y: 5 }
-    });
-
+      });
+      
     // Experience display
     this.add.text(statsX, statsY + 30, `Experience: ${player.experience}`, {
       fontSize: '18px',
@@ -257,6 +258,9 @@ export class MainMenuScene extends Phaser.Scene {
   private startGame(): void {
     console.log('🚀 Starting game - transitioning to WorldMapScene');
     
+    // Stop all sounds before transition
+    this.sound.stopAll();
+    
     // Ensure game is properly initialized
     const services = this.bridge.getServices();
     services.gameState.saveGame(); // Save current state
@@ -279,7 +283,7 @@ export class MainMenuScene extends Phaser.Scene {
     
     // Recreate stats display
     this.scene.restart();
-  }
+    }
 
   /**
    * Load saved game state (for continue functionality)

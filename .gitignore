@@ -1,2 +1,6 @@
 node_modules/
 .idea/
+*.log
+
+# Keep dist/ for GitHub Pages deployment
+# dist/

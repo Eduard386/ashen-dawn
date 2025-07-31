@@ -1,5 +1,5 @@
-import { IWeapon } from './IWeapon';
-import { ICombatant } from './IEnemy';
+import { IWeapon } from './IWeapon.js';
+import { ICombatant } from './IEnemy.js';
 import { CombatResult } from '../types/GameTypes';
 
 export interface ICombatResult {

@@ -1,5 +1,5 @@
-import * as Phaser from 'phaser';
-import { LegacyBridge } from '../core/bridges/LegacyBridge';
+// Note: Phaser is loaded globally via CDN in index.html
+import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
 
 /**
  * Modern TypeScript VictoryScene - Post-battle loot and rewards
@@ -55,9 +55,14 @@ export class VictoryScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Load victory assets
-    this.load.image('victory_background', 'assets/images/victory/victory.png');
-    this.load.audio('victory_music', 'assets/sounds/victory/victory.wav');
+    // Load victory assets (matching BattleScene naming)
+    // Always load to ensure availability
+    console.log('📦 VictoryScene preload started...');
+    this.load.image('victory_bg', 'assets/images/victory/victory.png');
+    
+    if (!this.cache.audio.exists('victory_sound')) {
+      this.load.audio('victory_sound', 'assets/sounds/victory/victory.wav');
+    }
 
     // Load ammo icons
     this.load.image('mm_9', 'assets/images/ammo_small/mm_9.png');
@@ -80,6 +85,33 @@ export class VictoryScene extends Phaser.Scene {
 
   create(): void {
     console.log('🏆 Modern VictoryScene initialized with TypeScript services');
+    
+    // FORCEFULLY stop all sounds from previous scenes
+    this.sound.stopAll();
+    
+    // Additional forced stop for specific breathing sounds that might persist
+    try {
+      const breathSound = this.sound.get('breath');
+      const hardBreathSound = this.sound.get('hard_breath');
+      if (breathSound) breathSound.stop();
+      if (hardBreathSound) hardBreathSound.stop();
+      
+      // Stop enemy death sounds that might be playing
+      const enemyDeathSounds = [
+        'Mantis - died', 'Cannibal man 1 - died', 'Cannibal man 2 - died', 
+        'Cannibal man 3 - died', 'Cannibal woman 1 - died', 'Cannibal woman 2 - died'
+      ];
+      enemyDeathSounds.forEach(soundKey => {
+        try {
+          const sound = this.sound.get(soundKey);
+          if (sound) sound.stop();
+        } catch (e) {
+          // Ignore if sound doesn't exist
+        }
+      });
+    } catch (error) {
+      // Ignore if sounds don't exist
+    }
     
     // Initialize bridge
     this.bridge = LegacyBridge.getInstance();
@@ -108,34 +140,53 @@ export class VictoryScene extends Phaser.Scene {
   }
 
   private createBackground(): void {
+    console.log('🖼️ Attempting to create victory background...');
+    
+    // Check if texture exists
+    if (!this.textures.exists('victory_bg')) {
+      console.warn('❌ victory_bg texture not found, creating fallback');
+      this.createFallbackBackground();
+      return;
+    }
+    
     try {
-      this.background = this.add.image(0, 0, 'victory_background')
+      console.log('✅ victory_bg texture found, creating image...');
+      this.background = this.add.image(0, 0, 'victory_bg') // Fixed to match preload
         .setOrigin(0, 0)
         .setScrollFactor(0);
+      console.log('🏆 Victory background loaded successfully');
     } catch (error) {
-      // Fallback if background fails to load
-      console.warn('Victory background failed to load, using fallback');
-      const graphics = this.add.graphics();
-      graphics.fillStyle(0x2a4a3a);
-      graphics.fillRect(0, 0, 1024, 600);
-      
-      // Add victory text
-      this.add.text(512, 100, 'VICTORY!', {
-        fontSize: '72px',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-        fontStyle: 'bold'
-      }).setOrigin(0.5);
+      console.warn('❌ Victory background failed to load, using fallback:', error);
+      this.createFallbackBackground();
     }
   }
 
+  private createFallbackBackground(): void {
+    // Fallback if background fails to load
+    const graphics = this.add.graphics();
+    graphics.fillStyle(0x2a4a3a);
+    graphics.fillRect(0, 0, 1024, 600);
+    
+    // Add victory text
+    this.add.text(512, 100, 'VICTORY!', {
+      fontSize: '72px',
+      color: '#ffffff',
+      fontFamily: 'monospace',
+      fontStyle: 'bold'
+    }).setOrigin(0.5);
+  }
+
   private playVictoryMusic(): void {
-    try {
-      this.victoryMusic = this.sound.add('victory_music');
-      this.victoryMusic.play();
-    } catch (error) {
-      console.warn('Victory music failed to load');
-    }
+    // Add small delay to ensure previous sounds are stopped
+    this.time.delayedCall(200, () => {
+      try {
+        this.victoryMusic = this.sound.add('victory_sound'); // Fixed to match preload
+        this.victoryMusic.play({ loop: true, volume: 0.5 }); // Added loop and volume
+        console.log('🎵 Victory music started playing');
+      } catch (error) {
+        console.warn('Victory music failed to load:', error);
+      }
+    });
   }
 
   private processLootAndRewards(): void {
@@ -308,69 +359,70 @@ export class VictoryScene extends Phaser.Scene {
       return;
     }
 
-    // Layout configuration
-    const maxItemsPerRow = 4;
-    const itemSize = 80;
-    const gap = 20;
+    // Horizontal layout configuration
+    const itemSize = 64; // Fixed size for all items (width and height)
+    const gap = 20; // Gap between items
+    const startY = 280; // Y position for items
     
-    // Calculate grid dimensions
-    const totalRows = Math.ceil(lootKeys.length / maxItemsPerRow);
-    const rectWidth = maxItemsPerRow * itemSize + (maxItemsPerRow - 1) * gap + 40;
-    const rectHeight = totalRows * itemSize + (totalRows - 1) * gap + 40;
+    // Calculate total width and starting X position
+    const totalWidth = lootKeys.length * itemSize + (lootKeys.length - 1) * gap;
+    const startX = 512 - totalWidth / 2;
     
-    // Draw background rectangle
-    const rectX = 512 - rectWidth / 2;
-    const rectY = 280;
-    
-    const graphics = this.add.graphics();
-    graphics.fillStyle(0x000000, 0.8);
-    graphics.fillRoundedRect(rectX, rectY, rectWidth, rectHeight, 10);
-    
-    // Draw border
-    graphics.lineStyle(2, 0xffffff, 0.5);
-    graphics.strokeRoundedRect(rectX, rectY, rectWidth, rectHeight, 10);
-
-    // Display loot items
-    let currentX = rectX + 20;
-    let currentY = rectY + 20;
-    let itemIndex = 0;
-
-    lootKeys.forEach((item) => {
-      // Move to next row if needed
-      if (itemIndex % maxItemsPerRow === 0 && itemIndex !== 0) {
-        currentY += itemSize + gap;
-        currentX = rectX + 20;
-      }
-
+    // Display each looted item horizontally
+    lootKeys.forEach((item, index) => {
+      const itemX = startX + index * (itemSize + gap);
+      
       try {
-        // Draw item sprite
-        this.add.sprite(currentX, currentY, item)
-          .setOrigin(0, 0)
+        // Draw item sprite with fixed size
+        const itemSprite = this.add.sprite(itemX + itemSize / 2, startY + itemSize / 2, item)
+          .setOrigin(0.5, 0.5)
           .setScrollFactor(0)
-          .setDisplaySize(itemSize - 10, itemSize - 10);
+          .setDisplaySize(itemSize, itemSize); // Fixed size for consistency
 
-        // Draw quantity if > 1
+        // Draw quantity if > 1 (top-right corner)
         if (lootInfo[item] > 1) {
-          this.add.text(currentX + itemSize - 20, currentY - 5, `x${lootInfo[item]}`, {
-            fontSize: '16px',
+          this.add.text(itemX + itemSize - 5, startY - 5, `x${lootInfo[item]}`, {
+            fontSize: '14px',
             color: '#ffffff',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            backgroundColor: 'rgba(0,0,0,0.7)',
-            padding: { x: 4, y: 2 }
-          }).setOrigin(0.5, 0);
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: { x: 3, y: 1 }
+          }).setOrigin(1, 0);
         }
-      } catch (error) {
-        // Fallback text if sprite fails
-        this.add.text(currentX, currentY, `${item}: ${lootInfo[item]}`, {
-          fontSize: '14px',
-          color: '#ffffff',
-          fontFamily: 'Arial'
-        });
-      }
 
-      currentX += itemSize + gap;
-      itemIndex++;
+        // Item title below the item, centered
+        this.add.text(itemX + itemSize / 2, startY + itemSize + 8, item, {
+          fontSize: '12px',
+          color: '#ffffff',
+          fontFamily: 'Arial',
+          align: 'center',
+          wordWrap: { width: itemSize + 10 }
+        }).setOrigin(0.5, 0);
+
+      } catch (error) {
+        // Fallback rectangle if sprite fails
+        const graphics = this.add.graphics();
+        graphics.fillStyle(0x666666);
+        graphics.fillRect(itemX, startY, itemSize, itemSize);
+        
+        // Fallback text
+        this.add.text(itemX + itemSize / 2, startY + itemSize / 2, item, {
+          fontSize: '10px',
+          color: '#ffffff',
+          fontFamily: 'Arial',
+          align: 'center',
+          wordWrap: { width: itemSize - 10 }
+        }).setOrigin(0.5, 0.5);
+
+        // Title below fallback
+        this.add.text(itemX + itemSize / 2, startY + itemSize + 8, `${item}: ${lootInfo[item]}`, {
+          fontSize: '12px',
+          color: '#ffffff',
+          fontFamily: 'Arial',
+          align: 'center'
+        }).setOrigin(0.5, 0);
+      }
     });
   }
 

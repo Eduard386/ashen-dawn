@@ -1,432 +1,316 @@
-import * as Phaser from 'phaser';
-import { LegacyBridge } from '../core/bridges/LegacyBridge';
+// Note: Phaser is loaded globally via CDN in index.html
+import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
 
 /**
- * Modern TypeScript WorldMapScene with enhanced encounter system
- * Handles world map travel, random encounters, and exploration
+ * TypeScript WorldMapScene - EXACT legacy visual style
+ * Matches the original JavaScript WorldMapScene precisely
  */
 export class WorldMapScene extends Phaser.Scene {
   private bridge!: LegacyBridge;
-  private popupActive: boolean = false;
-  private selectedButton: string = 'Yes';
-  private encounterTimer?: Phaser.Time.TimerEvent;
+  private gameData: any;
   
-  // Audio
+  // EXACT legacy properties
+  private popupActive: boolean = false;
+  private selectedButton: string = "No"; // Default to "No" like legacy
   private soundtrack?: Phaser.Sound.BaseSound;
-  private soundtrackNames: string[] = [
-    'A Traders Life (in NCR)',
-    'All-Clear Signal (Vault City)',
-    'Beyond The Canyon (Arroyo)',
-    'California Revisited (Worldmap on foot)',
-    'Khans of New California (in the Den)',
-    'Moribund World (in Klamath)',
-    'My Chrysalis Highwayman (Worldmap with Car)'
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  private spaceKey!: Phaser.Input.Keyboard.Key;
+  
+  // EXACT legacy popup elements
+  private popupBackground!: Phaser.GameObjects.Graphics;
+  private popupText!: Phaser.GameObjects.Text;
+  private yesButton!: Phaser.GameObjects.Image;
+  private noButton!: Phaser.GameObjects.Image;
+  private chosenEnemy: any;
+  
+  // EXACT legacy enemies data (simplified version)
+  private readonly enemies_all = [
+    {
+      name: "Raiders",
+      title: [
+        "Raider - Leather Jacket - Baseball bat", 
+        "Raider - Leather Jacket - 9mm pistol", 
+        "Raider - Leather Jacket - Combat shotgun",
+        "Raider - Leather Armor - Baseball bat",
+        "Raider - Leather Armor - 9mm pistol",
+        "Raider - Leather Armor - Combat shotgun"
+      ],
+      amount: { min: 1, max: 3 }
+    },
+    {
+      name: "Cannibals", 
+      title: ["Cannibal man 1", "Cannibal woman 1", "Cannibal man 2"],
+      amount: { min: 1, max: 2 }
+    },
+    {
+      name: "Mantis",
+      title: ["Mantis"],
+      amount: { min: 1, max: 2 }
+    }
   ];
   
-  // UI Elements
-  private popupBackground?: Phaser.GameObjects.Graphics;
-  private popupText?: Phaser.GameObjects.Text;
-  private yesButton?: Phaser.GameObjects.Image;
-  private noButton?: Phaser.GameObjects.Image;
-  private roadVideo?: Phaser.GameObjects.Video;
-  
-  // Input
-  private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
-  private spaceKey?: Phaser.Input.Keyboard.Key;
+  // EXACT legacy soundtrack names
+  private readonly soundtrackNames = [
+    "A Traders Life (in NCR)",
+    "All-Clear Signal (Vault City)", 
+    "Beyond The Canyon (Arroyo)",
+    "California Revisited (Worldmap on foot)",
+    "Khans of New California (in the Den)",
+    "Moribund World (in Klamath)",
+    "My Chrysalis Highwayman (Worldmap with Car)",
+  ];
 
   constructor() {
     super({ key: 'WorldMapScene' });
   }
 
   preload(): void {
-    // Load soundtracks
+    // EXACT legacy asset loading
     this.soundtrackNames.forEach((name) => {
-      this.load.audio(name, `assets/sounds/battle_background/${name}.mp3`);
+      this.load.audio(name, "assets/sounds/battle_background/" + name + ".mp3");
     });
-    this.load.audio('travel', 'assets/psychobilly.mp3');
-
-    // Load video and UI assets
-    this.load.video('road', 'assets/road.mp4');
-    this.load.image('yes', 'assets/images/yes.png');
-    this.load.image('no', 'assets/images/no.png');
+    this.load.audio("travel", "assets/psychobilly.mp3");
+    this.load.video("road", "assets/road.mp4");
+    this.load.image("yes", "assets/images/yes.png");
+    this.load.image("no", "assets/images/no.png");
   }
 
   create(): void {
-    console.log('🗺️ Modern WorldMapScene initialized with TypeScript services');
+    // Stop all sounds from previous scenes (victory music, battle sounds, etc.)
+    this.sound.stopAll();
     
-    // Initialize bridge
+    // Initialize bridge and game data - exact legacy pattern
     this.bridge = LegacyBridge.getInstance();
     if (!this.bridge.isInitialized()) {
       this.bridge.initialize();
     }
+    this.gameData = this.bridge.getGameData();
 
-    // Start background music
+    // EXACT legacy soundtrack
     this.playRandomSoundtrack();
 
-    // Create road video background
-    this.createRoadBackground();
-    
-    // Create UI elements
-    this.createUI();
-    
-    // Setup input
-    this.setupInput();
-    
-    // Start encounter system
-    this.startEncounterSystem();
+    // EXACT legacy video background
+    const video = this.add.video(0, 0, "road").setOrigin(0);
+    video.play(true); // true = loop
+
+    // EXACT legacy input setup
+    this.cursors = this.input.keyboard!.createCursorKeys();
+    this.spaceKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    // EXACT legacy popup setup
+    this.createPopup();
+
+    // EXACT legacy encounter timer
+    this.startRandomEncounterTimer();
+
+    // Add ESC key to return to main menu (for testing)
+    this.input.keyboard!.on('keydown-ESC', () => {
+      this.sound.stopAll();
+      if (this.soundtrack) {
+        this.soundtrack.stop();
+        this.soundtrack.destroy();
+        this.soundtrack = null;
+      }
+      this.scene.start('MainMenu');
+    });
   }
 
   update(): void {
+    // EXACT legacy popup handling
     if (this.popupActive) {
       this.handlePopupInput();
     }
   }
 
-  private createRoadBackground(): void {
-    try {
-      this.roadVideo = this.add.video(0, 0, 'road').setOrigin(0, 0);
-      this.roadVideo.play(true); // Loop the video
-    } catch (error) {
-      // Fallback if video fails to load
-      console.warn('Road video failed to load, using fallback background');
-      const graphics = this.add.graphics();
-      graphics.fillStyle(0x4a3729);
-      graphics.fillRect(0, 0, 1024, 600);
-      
-      // Add some visual interest
-      graphics.fillStyle(0x2c1810);
-      graphics.fillRect(300, 250, 424, 100); // Road
-    }
-  }
-
-  private createUI(): void {
-    // Create popup elements (initially hidden)
-    this.createPopup();
-    
-    // Create any other UI elements here
-    this.createStatusDisplay();
-  }
-
-  private createStatusDisplay(): void {
-    const playerLevel = this.bridge.getPlayerLevel();
-    const playerHealth = this.bridge.getPlayerHealth();
-    const playerMaxHealth = this.bridge.getPlayerMaxHealth();
-    
-    // Player status display
-    this.add.text(20, 20, `Level ${playerLevel}`, {
-      fontSize: '16px',
-      color: '#ffffff',
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      padding: { x: 10, y: 5 }
-    });
-    
-    this.add.text(20, 50, `Health: ${playerHealth}/${playerMaxHealth}`, {
-      fontSize: '14px',
-      color: '#ffffff',
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      padding: { x: 10, y: 5 }
-    });
-    
-    this.add.text(20, 80, 'Space: Open Menu', {
-      fontSize: '14px',
-      color: '#ffffff',
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      padding: { x: 10, y: 5 }
-    });
-  }
-
-  private setupInput(): void {
-    this.cursors = this.input.keyboard?.createCursorKeys();
-    this.spaceKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    
-    // Space key to open menu/pause
-    this.spaceKey?.on('down', () => {
-      if (!this.popupActive) {
-        this.openTravelMenu();
-      }
-    });
-  }
-
-  private openTravelMenu(): void {
-    // Simple travel menu for now
-    this.showPopup('Travel Menu', [
-      { text: 'Continue Traveling', action: () => this.hidePopup() },
-      { text: 'Return to Main Menu', action: () => this.scene.start('MainMenuScene') }
-    ]);
-  }
-
   private playRandomSoundtrack(): void {
-    // Use travel music for now, can be randomized later
-    this.soundtrack = this.sound.add('travel');
-    
-    if (this.soundtrack) {
-      this.soundtrack.play();
-      
-      this.soundtrack.once('complete', () => {
-        this.playRandomSoundtrack(); // Loop to next soundtrack
-      });
-    }
-  }
+    // EXACT legacy soundtrack logic with fallback for missing assets
+    try {
+      if (this.cache.audio.exists("travel")) {
+        this.soundtrack = this.sound.add("travel");
+        this.soundtrack.play();
 
-  private startEncounterSystem(): void {
-    this.scheduleNextEncounter();
-  }
-
-  private scheduleNextEncounter(): void {
-    // Clear existing timer
-    if (this.encounterTimer) {
-      this.encounterTimer.remove();
-    }
-    
-    // Random delay between 3-6 seconds
-    const delay = Phaser.Math.Between(3000, 6000);
-    
-    this.encounterTimer = this.time.delayedCall(delay, () => {
-      if (!this.popupActive) {
-        this.triggerRandomEncounter();
+        this.soundtrack.once("complete", () => {
+          this.playRandomSoundtrack(); // Loop to next soundtrack
+        });
+      } else {
+        console.warn("Travel soundtrack not found, continuing without audio");
       }
-      // Schedule next encounter
-      this.scheduleNextEncounter();
+    } catch (error) {
+      console.warn("Audio playback failed, continuing without sound:", error);
+    }
+  }
+
+  private startRandomEncounterTimer(): void {
+    // EXACT legacy encounter timer logic
+    const n = 3;
+    const m = 6;
+
+    this.time.addEvent({
+      delay: Phaser.Math.Between(n * 1000, m * 1000),
+      callback: () => {
+        if (!this.popupActive) {
+          const survivingSkill = this.gameData?.skills?.surviving || 0;
+          const randomChance = Phaser.Math.Between(1, 100);
+
+          if (randomChance <= survivingSkill) {
+            this.showPopup(true); // Can avoid - show both Yes and No buttons
+          } else {
+            this.showPopup(false); // Cannot avoid - only Yes button
+          }
+        }
+        this.startRandomEncounterTimer();
+      },
+      loop: false,
     });
-  }
-
-  private triggerRandomEncounter(): void {
-    const services = this.bridge.getServices();
-    const player = services.gameState.getPlayer();
-    
-    if (!player) return;
-    
-    // Check survival skill for avoidance
-    const survivingSkill = player.skills?.surviving || 75;
-    const avoidanceRoll = Phaser.Math.Between(1, 100);
-    
-    if (avoidanceRoll <= survivingSkill) {
-      // Player avoided the encounter
-      this.showAvoidanceMessage();
-    } else {
-      // Trigger encounter
-      this.generateRandomEncounter();
-    }
-  }
-
-  private showAvoidanceMessage(): void {
-    const messages = [
-      'You notice tracks ahead and take a detour.',
-      'Your survival instincts help you avoid danger.',
-      'You hear voices in the distance and hide.',
-      'You spot movement and carefully go around.'
-    ];
-    
-    const message = Phaser.Utils.Array.GetRandom(messages);
-    this.showPopup(message, [
-      { text: 'Continue', action: () => this.hidePopup() }
-    ]);
-  }
-
-  private generateRandomEncounter(): void {
-    const services = this.bridge.getServices();
-    const playerLevel = this.bridge.getPlayerLevel();
-    
-    // Generate enemies based on player level
-    const enemyTypes = ['Raiders', 'Cannibals', 'Tribe'];
-    const encounterType = Phaser.Utils.Array.GetRandom(enemyTypes);
-    
-    // Store encounter data for battle scene
-    this.bridge.getServices().gameState.setEncounterData({
-      enemyType: encounterType,
-      playerLevel: playerLevel
-    });
-    
-    this.showEncounterPopup(encounterType);
-  }
-
-  private showEncounterPopup(enemyType: string): void {
-    const encounterMessages = {
-      'Raiders': [
-        'Armed bandits block your path!',
-        'You hear the sound of engines approaching...',
-        'Hostile raiders have spotted you!'
-      ],
-      'Cannibals': [
-        'Wild-looking people emerge from the wasteland!',
-        'You stumble upon a cannibal camp!',
-        'Desperate survivors approach with hostile intent!'
-      ],
-      'Tribe': [
-        'Tribal warriors appear from the wilderness!',
-        'You encounter a hunting party!',
-        'Native survivors challenge your passage!'
-      ]
-    };
-    
-    const messages = encounterMessages[enemyType as keyof typeof encounterMessages] || 
-                    ['You encounter hostile survivors!'];
-    const message = Phaser.Utils.Array.GetRandom(messages);
-    
-    this.showPopup(message, [
-      { text: 'Fight', action: () => this.startBattle(enemyType) },
-      { text: 'Try to Avoid', action: () => this.attemptAvoidance() }
-    ]);
-  }
-
-  private startBattle(enemyType: string): void {
-    this.hidePopup();
-    
-    // Stop soundtrack
-    if (this.soundtrack) {
-      this.soundtrack.stop();
-    }
-    
-    // Transition to battle scene
-    this.scene.start('BattleScene', { enemyType });
-  }
-
-  private attemptAvoidance(): void {
-    const services = this.bridge.getServices();
-    const player = services.gameState.getPlayer();
-    
-    if (!player) return;
-    
-    const survivingSkill = player.skills?.surviving || 75;
-    const avoidanceRoll = Phaser.Math.Between(1, 100);
-    
-    if (avoidanceRoll <= survivingSkill) {
-      this.showPopup('You successfully avoid the encounter!', [
-        { text: 'Continue', action: () => this.hidePopup() }
-      ]);
-    } else {
-      this.showPopup('You cannot avoid the encounter!', [
-        { text: 'Prepare for Battle', action: () => {
-          const encounterData = services.gameState.getEncounterData();
-          this.startBattle(encounterData?.enemyType || 'Raiders');
-        }}
-      ]);
-    }
   }
 
   private createPopup(): void {
-    const centerX = this.cameras.main.width / 2;
-    const centerY = this.cameras.main.height / 2;
+    // EXACT legacy popup creation
+    const cameraCenterX = this.cameras.main.width / 2;
+    const cameraCenterY = this.cameras.main.height / 2;
 
-    // Background
-    this.popupBackground = this.add.graphics()
-      .fillStyle(0x000000, 0.8)
-      .fillRoundedRect(centerX - 200, centerY - 100, 400, 200, 10)
-      .setScrollFactor(0)
-      .setVisible(false);
+    // Background modal
+    this.popupBackground = this.add
+      .graphics({ x: cameraCenterX, y: cameraCenterY })
+      .fillStyle(0x000000, 0.75)
+      .fillRect(-150, -100, 300, 200);
+    this.popupBackground.setScrollFactor(0);
 
     // Text
-    this.popupText = this.add.text(centerX, centerY - 30, '', {
-      fontSize: '16px',
-      color: '#ffffff',
-      align: 'center',
-      wordWrap: { width: 350 }
-    })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setVisible(false);
-
-    // Buttons will be created dynamically
-  }
-
-  private showPopup(text: string, actions: Array<{text: string, action: () => void}>): void {
-    if (this.popupActive) return;
-    
-    this.popupActive = true;
-    
-    // Update text
-    if (this.popupText) {
-      this.popupText.setText(text).setVisible(true);
-    }
-    
-    // Show background
-    if (this.popupBackground) {
-      this.popupBackground.setVisible(true);
-    }
-    
-    // Create action buttons
-    this.createActionButtons(actions);
-  }
-
-  private createActionButtons(actions: Array<{text: string, action: () => void}>): void {
-    const centerX = this.cameras.main.width / 2;
-    const centerY = this.cameras.main.height / 2;
-    const buttonY = centerY + 50;
-    
-    // Remove existing buttons
-    this.clearActionButtons();
-    
-    actions.forEach((action, index) => {
-      const buttonX = centerX + (actions.length === 1 ? 0 : (index - 0.5) * 120);
-      
-      // Button background
-      const buttonBg = this.add.graphics()
-        .fillStyle(0x333333)
-        .fillRoundedRect(buttonX - 50, buttonY - 15, 100, 30, 5)
-        .setScrollFactor(0)
-        .setInteractive(new Phaser.Geom.Rectangle(buttonX - 50, buttonY - 15, 100, 30), 
-          Phaser.Geom.Rectangle.Contains);
-      
-      // Button text
-      const buttonText = this.add.text(buttonX, buttonY, action.text, {
-        fontSize: '14px',
-        color: '#ffffff'
+    this.popupText = this.add
+      .text(cameraCenterX, cameraCenterY - 50, "", {
+        fontSize: "16px",
+        color: "#0f0", // Legacy green color
       })
-        .setOrigin(0.5)
-        .setScrollFactor(0);
-      
-      // Button interactions
-      buttonBg.on('pointerdown', () => {
-        action.action();
-      });
-      
-      buttonBg.on('pointerover', () => {
-        buttonBg.clear().fillStyle(0x555555).fillRoundedRect(buttonX - 50, buttonY - 15, 100, 30, 5);
-      });
-      
-      buttonBg.on('pointerout', () => {
-        buttonBg.clear().fillStyle(0x333333).fillRoundedRect(buttonX - 50, buttonY - 15, 100, 30, 5);
-      });
-      
-      // Store references for cleanup
-      buttonBg.setName('actionButton');
-      buttonText.setName('actionButtonText');
-    });
+      .setOrigin(0.5);
+    this.popupText.setScrollFactor(0);
+
+    // Buttons
+    this.yesButton = this.add
+      .image(cameraCenterX - 50, cameraCenterY + 50, "yes")
+      .setInteractive();
+    this.yesButton.setScrollFactor(0);
+
+    this.noButton = this.add
+      .image(cameraCenterX + 50, cameraCenterY + 50, "no")
+      .setInteractive();
+    this.noButton.setScrollFactor(0);
+
+    // Hide initially
+    this.hidePopup();
   }
 
-  private clearActionButtons(): void {
-    // Remove all action buttons
-    this.children.getChildren().forEach(child => {
-      if (child.name === 'actionButton' || child.name === 'actionButtonText') {
-        child.destroy();
-      }
-    });
+  private showPopup(hasNoButton: boolean): void {
+    // EXACT legacy enemy generation
+    const [enemyName, enemiesToCreate] = this.getLevelConfig(this.gameData?.levelCount || 1);
+    this.gameData.enemiesToCreate = enemiesToCreate; // Save to gameData
+    console.log(`You encounter ${enemyName}.`, enemiesToCreate);
+
+    // Update text
+    this.popupText.setText(`You encounter ${enemyName}.`);
+
+    // Show background/text
+    this.popupBackground.setVisible(true);
+    this.popupText.setVisible(true);
+    this.yesButton.setVisible(true);
+
+    if (hasNoButton) {
+      this.noButton.setVisible(true);
+      // Position buttons apart
+      this.yesButton.setPosition(
+        this.cameras.main.width / 2 - 50,
+        this.cameras.main.height / 2 + 50
+      );
+      this.noButton.setPosition(
+        this.cameras.main.width / 2 + 50,
+        this.cameras.main.height / 2 + 50
+      );
+      this.selectedButton = "No"; // Default to No like legacy
+      this.yesButton.setScale(1);
+      this.noButton.setScale(1.5); // Highlight selected
+    } else {
+      // No "No" button
+      this.noButton.setVisible(false);
+      this.yesButton.setPosition(
+        this.cameras.main.width / 2,
+        this.cameras.main.height / 2 + 50
+      );
+      this.selectedButton = "Yes";
+      this.yesButton.setScale(1.5); // Highlight selected
+    }
+
+    this.popupActive = true;
   }
 
   private hidePopup(): void {
+    // EXACT legacy hide logic
+    this.popupBackground.setVisible(false);
+    this.popupText.setVisible(false);
+    this.yesButton.setVisible(false);
+    this.noButton.setVisible(false);
     this.popupActive = false;
-    
-    if (this.popupBackground) {
-      this.popupBackground.setVisible(false);
-    }
-    
-    if (this.popupText) {
-      this.popupText.setVisible(false);
-    }
-    
-    this.clearActionButtons();
   }
 
   private handlePopupInput(): void {
-    // Handle keyboard input for popup navigation
-    if (this.cursors?.left?.isDown || this.cursors?.right?.isDown) {
-      // Toggle selected button
-      this.selectedButton = this.selectedButton === 'Yes' ? 'No' : 'Yes';
+    // EXACT legacy input handling
+    if (this.noButton.visible) {
+      if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
+        this.selectedButton = "No";
+        this.yesButton.setScale(1);
+        this.noButton.setScale(1.5);
+      } else if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
+        this.selectedButton = "Yes";
+        this.yesButton.setScale(1.5);
+        this.noButton.setScale(1);
+      }
     }
-    
-    if (this.cursors?.space?.isDown) {
-      // Activate selected button
-      // This would need to be connected to the current action buttons
+
+    if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+      if (this.selectedButton === "Yes") {
+        if (this.soundtrack) {
+          this.soundtrack.stop();
+        }
+        console.log(`Starting battle with ${this.chosenEnemy.name}!`);
+        console.log(`Enemies:`, this.gameData.enemiesToCreate);
+        
+        // Stop all sounds before transition
+        this.sound.stopAll();
+        if (this.soundtrack) {
+          this.soundtrack.stop();
+          this.soundtrack.destroy();
+          this.soundtrack = null;
+        }
+        
+        // EXACT legacy scene transition - pass enemy data to BattleScene
+        this.hidePopup();
+        this.scene.start("BattleScene", {
+          enemyType: this.chosenEnemy.name,
+          enemies: this.gameData.enemiesToCreate
+        });
+      } else if (this.selectedButton === "No") {
+        this.hidePopup();
+      }
     }
+  }
+
+  private getLevelConfig(playerLevel: number): [string, string[]] {
+    // EXACT legacy enemy generation logic
+    const enemiesToCreate: string[] = [];
+
+    // Choose random enemy
+    this.chosenEnemy = Phaser.Utils.Array.GetRandom(this.enemies_all);
+
+    const numberOfEnemies = Phaser.Math.Between(
+      this.chosenEnemy.amount.min,
+      this.chosenEnemy.amount.max
+    );
+
+    // Collect list of enemy names
+    for (let i = 0; i < numberOfEnemies; i++) {
+      const randomIndex = Math.floor(Math.random() * this.chosenEnemy.title.length);
+      enemiesToCreate.push(this.chosenEnemy.title[randomIndex]);
+    }
+
+    return [this.chosenEnemy.name, enemiesToCreate];
   }
 }

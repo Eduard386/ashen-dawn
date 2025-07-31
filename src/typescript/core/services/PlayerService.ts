@@ -1,4 +1,4 @@
-import { IPlayerCharacter, IPlayerSkills, IInventory } from '../interfaces/IPlayer';
+import { IPlayerCharacter, IPlayerSkills, IInventory } from '../interfaces/IPlayer.js';
 
 /**
  * Player Service - Manages player character data and operations

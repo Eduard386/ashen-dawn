@@ -1,7 +1,7 @@
-import { ICombatResult, IDamageCalculation } from '../interfaces/ICombat';
-import { IPlayerCharacter } from '../interfaces/IPlayer';
-import { IWeapon } from '../interfaces/IWeapon';
-import { IEnemy } from '../interfaces/IEnemy';
+import { ICombatResult, IDamageCalculation } from '../interfaces/ICombat.js';
+import { IPlayerCharacter } from '../interfaces/IPlayer.js';
+import { IWeapon } from '../interfaces/IWeapon.js';
+import { IEnemy } from '../interfaces/IEnemy.js';
 
 /**
  * Combat Service - Handles all combat calculations and mechanics
