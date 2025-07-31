@@ -1,12 +1,13 @@
 // Note: Phaser is loaded globally via CDN in index.html
-import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
+import { GameDataService } from '../core/services/GameDataService.js';
 /**
  * TypeScript WorldMapScene - EXACT legacy visual style
  * Matches the original JavaScript WorldMapScene precisely
+ * Now using pure TypeScript GameDataService instead of LegacyBridge
  */
 export class WorldMapScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'WorldMapScene' });
+        super({ key: 'WorldMap' });
         // EXACT legacy properties
         this.popupActive = false;
         this.selectedButton = "No"; // Default to "No" like legacy
@@ -59,12 +60,10 @@ export class WorldMapScene extends Phaser.Scene {
     create() {
         // Stop all sounds from previous scenes (victory music, battle sounds, etc.)
         this.sound.stopAll();
-        // Initialize bridge and game data - exact legacy pattern
-        this.bridge = LegacyBridge.getInstance();
-        if (!this.bridge.isInitialized()) {
-            this.bridge.initialize();
-        }
-        this.gameData = this.bridge.getGameData();
+        // Initialize GameDataService
+        this.gameDataService = GameDataService.getInstance();
+        this.gameDataService.init();
+        this.gameData = this.gameDataService.get();
         // EXACT legacy soundtrack
         this.playRandomSoundtrack();
         // EXACT legacy video background

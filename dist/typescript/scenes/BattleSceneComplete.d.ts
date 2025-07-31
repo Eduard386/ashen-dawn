@@ -1,9 +1,10 @@
 /**
  * Complete Legacy BattleScene - Exact functionality from legacy JS
  * All assets, sounds, weapon switching, combat mechanics restored
+ * Now using pure TypeScript GameDataService instead of LegacyBridge
  */
 export declare class BattleScene extends Phaser.Scene {
-    private bridge;
+    private gameDataService;
     private gameData;
     private soundtrackNames;
     private weapons;
@@ -18,6 +19,7 @@ export declare class BattleScene extends Phaser.Scene {
     private crosshair_green;
     private escape_button;
     private healthText;
+    private levelText;
     private weaponStatsText;
     private armorStatsText;
     private first_aid_kit;
@@ -101,4 +103,9 @@ export declare class BattleScene extends Phaser.Scene {
     private updateItemVisibility;
     private updateHealthMask;
     private generateVictoryLoot;
+    private getEnemyWeapons;
+    private getEnemyArmor;
+    private shouldGetArmor;
+    private calculatePlayerLevel;
+    private updatePlayerLevel;
 }

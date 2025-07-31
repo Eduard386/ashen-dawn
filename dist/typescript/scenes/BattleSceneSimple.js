@@ -1,7 +1,8 @@
-import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
+import { GameDataService } from '../core/services/GameDataService.js';
 /**
  * Complete Legacy BattleScene - Full functionality restored
  * Includes enemy movement, weapon switching, armor display, stats, sounds
+ * Now using pure TypeScript GameDataService instead of LegacyBridge
  */
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -89,12 +90,10 @@ export class BattleScene extends Phaser.Scene {
         // });
     }
     create(data = {}) {
-        // Initialize bridge and game data
-        this.bridge = LegacyBridge.getInstance();
-        if (!this.bridge.isInitialized()) {
-            this.bridge.initialize();
-        }
-        this.gameData = this.bridge.getGameData();
+        // Initialize GameDataService
+        this.gameDataService = GameDataService.getInstance();
+        this.gameDataService.init();
+        this.gameData = this.gameDataService.get();
         // Setup camera like legacy
         this.cameras.main.setBounds(0, 0, 2048, 600);
         this.cameras.main.scrollX = 512;
@@ -133,7 +132,7 @@ export class BattleScene extends Phaser.Scene {
         // ESC to return to WorldMap
         this.input.keyboard.on('keydown-ESC', () => {
             console.log('🔙 Returning to WorldMap from battle');
-            this.scene.start('WorldMapScene');
+            this.scene.start('WorldMap');
         });
     }
     createBackground() {

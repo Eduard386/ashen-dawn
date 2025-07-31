@@ -1,12 +1,13 @@
 // Note: Phaser is loaded globally via CDN in index.html
-import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
+import { GameDataService } from '../core/services/GameDataService.js';
 
 /**
  * Modern TypeScript DeadScene - Game over screen
  * Handles player death, score display, and game restart
+ * Now using pure TypeScript GameDataService instead of LegacyBridge
  */
 export class DeadScene extends Phaser.Scene {
-  private bridge!: LegacyBridge;
+  private gameDataService!: GameDataService;
   
   // Audio
   private deathMusic?: Phaser.Sound.BaseSound;
@@ -31,8 +32,8 @@ export class DeadScene extends Phaser.Scene {
     this.load.audio('death_music', 'assets/sounds/death/death.wav');
   }
 
-  create(): void {
-    console.log('💀 Modern DeadScene initialized - Game Over');
+  create(data?: { cause?: string; finalStats?: any }): void {
+    console.log('💀 Modern DeadScene initialized - Game Over', data);
     
     // FORCEFULLY stop ALL sounds from previous scenes including breathing sounds
     this.sound.stopAll();
@@ -56,10 +57,13 @@ export class DeadScene extends Phaser.Scene {
     // Stop all sounds from previous scenes (breathing, battle sounds, etc.)
     this.sound.stopAll();
     
-    // Initialize bridge
-    this.bridge = LegacyBridge.getInstance();
-    if (!this.bridge.isInitialized()) {
-      this.bridge.initialize();
+    // Initialize GameDataService
+    this.gameDataService = GameDataService.getInstance();
+    this.gameDataService.init();
+
+    // Store death data
+    if (data) {
+      (this as any).deathData = data;
     }
 
     // Create background
@@ -117,8 +121,7 @@ export class DeadScene extends Phaser.Scene {
   }
 
   private displayGameOverInfo(): void {
-    const services = this.bridge.getServices();
-    const player = services.gameState.getPlayer();
+    const gameData = this.gameDataService.get();
     
     // Main game over text
     this.gameOverText = this.add.text(512, 200, 'GAME OVER', {
@@ -139,24 +142,26 @@ export class DeadScene extends Phaser.Scene {
       padding: { x: 20, y: 10 }
     }).setOrigin(0.5);
 
-    // Display final stats if player exists
-    if (player) {
-      this.displayFinalStats(player);
+    // Display final stats using gameData
+    this.displayFinalStats(gameData);
+
+    // Display death cause if available
+    const deathData = (this as any).deathData;
+    if (deathData && deathData.cause) {
+      this.displayCauseOfDeath(deathData.cause);
     }
 
-    // Restart instructions
-    this.restartText = this.add.text(512, 520, 
-      'Press SPACE or ENTER to return to Main Menu\nYour progress will be reset to Level 1', {
-      fontSize: '18px',
-      color: '#cccccc',
+    // Instructions for restart
+    this.add.text(512, 500, 'Press SPACE to restart the game', {
+      fontSize: '20px',
+      color: '#00ff00',
       fontFamily: 'monospace',
-      align: 'center',
       backgroundColor: 'rgba(0,0,0,0.8)',
-      padding: { x: 15, y: 10 }
+      padding: { x: 15, y: 8 }
     }).setOrigin(0.5);
   }
 
-  private displayFinalStats(player: any): void {
+  private displayFinalStats(gameData: any): void {
     const statsX = 512;
     const statsY = 350;
 
@@ -177,19 +182,19 @@ export class DeadScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.add.text(statsX, statsY, `Level Reached: ${player.levelCount}`, {
+    this.add.text(statsX, statsY, `Level Reached: ${gameData.levelCount}`, {
       fontSize: '16px',
       color: '#ffaa00',
       fontFamily: 'monospace'
     }).setOrigin(0.5);
 
-    this.add.text(statsX, statsY + 20, `Experience Gained: ${player.experience}`, {
+    this.add.text(statsX, statsY + 20, `Experience Gained: ${gameData.experience}`, {
       fontSize: '16px',
       color: '#ffaa00',
       fontFamily: 'monospace'
     }).setOrigin(0.5);
 
-    this.add.text(statsX, statsY + 40, `Best Weapon: ${player.currentWeapon}`, {
+    this.add.text(statsX, statsY + 40, `Best Weapon: ${gameData.current_weapon}`, {
       fontSize: '16px',
       color: '#ffaa00',
       fontFamily: 'monospace'
@@ -205,14 +210,8 @@ export class DeadScene extends Phaser.Scene {
     console.log('💀 Processing game over - resetting progress');
     
     // Reset game to default state
-    const services = this.bridge.getServices();
-    services.gameState.resetGame();
-    
-    // Clear any encounter data
-    services.gameState.clearEncounterData();
-    
-    // Save the reset state
-    services.gameState.saveGame();
+    this.gameDataService.reset();
+    this.gameDataService.save();
   }
 
   private restartGame(): void {
@@ -222,6 +221,9 @@ export class DeadScene extends Phaser.Scene {
     if (this.deathMusic) {
       this.deathMusic.stop();
     }
+    
+    // Stop all sounds to prevent any overlap
+    this.sound.stopAll();
     
     // Return to main menu (game is already reset)
     this.scene.start('MainMenu');

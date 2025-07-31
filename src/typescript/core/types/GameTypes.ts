@@ -1,5 +1,5 @@
 // Core game types
-export type SceneName = 'MainMenu' | 'WorldMapScene' | 'EncounterScene' | 'BattleScene' | 'VictoryScene' | 'DeadScene';
+export type SceneName = 'MainMenu' | 'WorldMap' | 'EncounterScene' | 'BattleScene' | 'VictoryScene' | 'DeadScene';
 
 export type WeaponSkillType = 'small_guns' | 'big_guns' | 'energy_weapons' | 'melee_weapons' | 'pyrotechnics';
 

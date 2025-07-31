@@ -1,11 +1,12 @@
-import { LegacyBridge } from '../core/bridges/LegacyBridge.js';
+import { GameDataService } from '../core/services/GameDataService.js';
 
 /**
  * Complete Legacy BattleScene - Exact functionality from legacy JS
  * All assets, sounds, weapon switching, combat mechanics restored
+ * Now using pure TypeScript GameDataService instead of LegacyBridge
  */
 export class BattleScene extends Phaser.Scene {
-  private bridge!: LegacyBridge;
+  private gameDataService!: GameDataService;
   private gameData: any;
   
   // Legacy data structures
@@ -88,6 +89,7 @@ export class BattleScene extends Phaser.Scene {
   
   // Stats display elements
   private healthText!: Phaser.GameObjects.Text;
+  private levelText!: Phaser.GameObjects.Text;
   private weaponStatsText!: Phaser.GameObjects.Text;
   private armorStatsText!: Phaser.GameObjects.Text;
   
@@ -118,9 +120,10 @@ export class BattleScene extends Phaser.Scene {
   
   // Pre-calculated stable loot
   private victoryLoot: {
-    weapon: string;
-    ammoType: string;
+    weapon: string | null;
+    ammoType: string | null;
     ammoAmount: number;
+    armor: string | null;
     medical: string;
     medAmount: number;
   } | null = null;
@@ -240,18 +243,24 @@ export class BattleScene extends Phaser.Scene {
   }
 
   create(data: { enemyType?: string; enemies?: string[] } = {}): void {
-    // Initialize bridge
-    this.bridge = LegacyBridge.getInstance();
-    if (!this.bridge.isInitialized()) {
-      this.bridge.initialize();
-    }
-    this.gameData = this.bridge.getGameData();
+    // Initialize GameDataService
+    this.gameDataService = GameDataService.getInstance();
+    this.gameDataService.init();
+    this.gameData = this.gameDataService.get();
 
     // Reset scene-specific flags
     this.isDead = false;
     this.isVictoryTriggered = false;
     this.isBreathSoundPlaying = false;
     this.isHardBreathSoundPlaying = false;
+
+    // Initialize experience and level if not set
+    if (this.gameData.experience === undefined) {
+      this.gameData.experience = 0;
+    }
+    if (this.gameData.levelCount === undefined) {
+      this.gameData.levelCount = 1;
+    }
 
     // Camera setup
     this.cameras.main.setBounds(0, 0, 2048, 600);
@@ -316,13 +325,17 @@ export class BattleScene extends Phaser.Scene {
     // ESC to return
     this.input.keyboard!.on('keydown-ESC', () => {
       this.stopAllSounds();
-      this.scene.start('WorldMapScene');
+      this.scene.start('WorldMap');
     });
     
-    // SHIFT to return (legacy control)
+    // SHIFT to return (legacy control) - only when escape button is visible
     this.input.keyboard!.on('keydown-SHIFT', () => {
-      this.stopAllSounds();
-      this.scene.start('WorldMapScene');
+      if (this.escape_button && this.escape_button.visible) {
+        console.log("🏃 Escaping from battle with SHIFT!");
+        this.escape_button.setVisible(false);
+        this.stopAllSounds();
+        this.scene.start('WorldMap');
+      }
     });
   }
 
@@ -598,7 +611,7 @@ export class BattleScene extends Phaser.Scene {
       this.stopAllSounds();
       
       // Return to world map
-      this.scene.start("WorldMapScene");
+      this.scene.start("WorldMap");
     }
   }
 
@@ -645,11 +658,15 @@ export class BattleScene extends Phaser.Scene {
       fontFamily: "Arial"
     };
 
+    // Calculate current level info
+    const levelInfo = this.calculatePlayerLevel(this.gameData.experience || 0);
+    this.gameData.levelCount = levelInfo.level;
+
     // Player stats - единый блок без визуальных разделений
     let yPos = 60;
     
-    // Level and Health (primary stats) - используем единый стиль
-    this.add.text(780, yPos, `LVL: ${this.gameData.levelCount || 1} (${this.gameData.experience || 0})`, textStyle).setScrollFactor(0);
+    // Level and Experience (new format: Level: X (current / total))
+    this.levelText = this.add.text(780, yPos, `Level: ${levelInfo.level} (${levelInfo.currentExp} / ${levelInfo.expToNext})`, textStyle).setScrollFactor(0);
     yPos += 20; // Уменьшили промежуток
     
     this.healthText = this.add.text(780, yPos, `HP: ${this.playerHealth}/${this.maxPlayerHealth}`, textStyle).setScrollFactor(0);
@@ -664,10 +681,6 @@ export class BattleScene extends Phaser.Scene {
     const critChance = this.gameData.critical_chance || 5;
     this.weaponStatsText = this.add.text(780, yPos,
       `${this.chosenWeapon.name}\nDMG: ${this.chosenWeapon.damage.min}-${this.chosenWeapon.damage.max}\nCooldown: ${this.chosenWeapon.cooldown}ms\nCrit: ${critChance}%`, textStyle).setScrollFactor(0);
-    yPos += 65; // Уменьшили промежуток (было 80)
-    
-    // Experience - единый стиль, убрали большой промежуток
-    this.add.text(780, yPos, `EXP: ${this.gameData.experience || 0}`, textStyle).setScrollFactor(0);
   }
 
   private updateStatsDisplay(): void {
@@ -677,6 +690,16 @@ export class BattleScene extends Phaser.Scene {
       color: "#ffffff",
       fontFamily: "Arial"
     };
+
+    // Update level display
+    if (this.levelText) {
+      const levelInfo = this.calculatePlayerLevel(this.gameData.experience || 0);
+      this.levelText.setStyle(textStyle);
+      this.levelText.setText(`Level: ${levelInfo.level} (${levelInfo.currentExp} / ${levelInfo.expToNext})`);
+      
+      // Update the stored level count
+      this.gameData.levelCount = levelInfo.level;
+    }
 
     // Update health display
     if (this.healthText) {
@@ -859,9 +882,13 @@ export class BattleScene extends Phaser.Scene {
       }
     });
 
-    // Check for victory condition
-    if (this.enemies.length === 0) {
-      this.victory();
+    // Check for victory condition (but with delay to let sounds play)
+    if (this.enemies.length === 0 && !this.isVictoryTriggered) {
+      this.time.delayedCall(300, () => {
+        if (this.enemies.length === 0 && !this.isVictoryTriggered) {
+          this.victory();
+        }
+      });
     }
   }
 
@@ -889,6 +916,7 @@ export class BattleScene extends Phaser.Scene {
       // Check death
       if (this.playerHealth <= 0) {
         this.playerDeath();
+        return; // Exit immediately to prevent further processing
       }
     }
     
@@ -1009,6 +1037,8 @@ export class BattleScene extends Phaser.Scene {
       // Check if enemy died
       if (targetEnemy.enemy.health <= 0) {
         console.log(`💀 ${targetEnemy.enemy.name} defeated!`);
+        
+        // Play enemy death sound
         this.playEnemySound(targetEnemy.enemy.name, "died");
         
         targetEnemy.sprite.destroy();
@@ -1024,6 +1054,14 @@ export class BattleScene extends Phaser.Scene {
         
         // Add experience
         this.gameData.experience += 50;
+        this.updatePlayerLevel(); // Update level based on new experience
+        
+        // Check for victory with delay to allow sounds to play
+        this.time.delayedCall(500, () => {
+          if (this.enemies.length === 0 && !this.isVictoryTriggered) {
+            this.victory();
+          }
+        });
       }
     } else {
       // Miss
@@ -1081,10 +1119,7 @@ export class BattleScene extends Phaser.Scene {
     
     console.log("🎉 Victory! All enemies defeated!");
     
-    // FORCEFULLY stop all sounds before transitioning
-    this.sound.stopAll();
-    
-    // Stop and destroy all individual sounds
+    // Stop only background sounds, let weapon/enemy sounds finish naturally
     if (this.soundtrack) {
       this.soundtrack.stop();
       this.soundtrack.destroy();
@@ -1101,10 +1136,10 @@ export class BattleScene extends Phaser.Scene {
       this.isHardBreathSoundPlaying = false;
     }
     
-    // Play victory sound ONCE
+    // Play victory sound (parallel with any existing weapon/enemy sounds)
     try {
       const victorySound = this.sound.add("victory_sound");
-      victorySound.play({ volume: 0.8 });
+      victorySound.play({ volume: 0.6 }); // Lower volume to not overpower other sounds
     } catch (error) {
       console.log("Victory sound not available");
     }
@@ -1126,71 +1161,74 @@ export class BattleScene extends Phaser.Scene {
     // Experience gained
     const expGained = 150; // Fixed amount per victory
     this.gameData.experience += expGained;
+    this.updatePlayerLevel(); // Update level based on new experience
+    
     this.add.text(512, 140, `Experience Gained: +${expGained}`, {
       fontSize: '24px',
       color: '#ffffff'
     }).setOrigin(0.5).setScrollFactor(0);
     
-    // Loot section
-    this.add.text(512, 200, 'LOOT FOUND:', {
-      fontSize: '28px',
-      color: '#ffff00'
-    }).setOrigin(0.5).setScrollFactor(0);
-    
-    // Use pre-calculated STABLE loot
-    if (!this.victoryLoot) {
-      console.error("No victory loot generated!");
-      return;
+    // Only show loot section if there is any loot
+    if (this.victoryLoot) {
+      // Loot section
+      this.add.text(512, 200, 'LOOT FOUND:', {
+        fontSize: '28px',
+        color: '#ffff00'
+      }).setOrigin(0.5).setScrollFactor(0);
+      
+      // Display loot
+      let lootY = 260;
+      
+      // Ammo loot (if available)
+      if (this.victoryLoot.ammoType && this.victoryLoot.ammoAmount > 0) {
+        try {
+          this.add.image(400, lootY, this.victoryLoot.ammoType).setScrollFactor(0);
+        } catch (error) {
+          this.add.rectangle(400, lootY, 30, 30, 0x666666).setScrollFactor(0);
+        }
+        this.add.text(450, lootY, `${this.victoryLoot.ammoAmount} rounds (${this.victoryLoot.ammoType.replace('_', ' ')})`, {
+          fontSize: '20px',
+          color: '#ffffff'
+        }).setOrigin(0, 0.5).setScrollFactor(0);
+        
+        // Add ammo to inventory
+        this.gameData.ammo[this.victoryLoot.ammoType] = (this.gameData.ammo[this.victoryLoot.ammoType] || 0) + this.victoryLoot.ammoAmount;
+        lootY += 40;
+      }
+      
+      // Armor loot (if available and better)
+      if (this.victoryLoot.armor) {
+        try {
+          this.add.image(400, lootY, "armor " + this.victoryLoot.armor).setScrollFactor(0).setScale(0.6);
+        } catch (error) {
+          this.add.rectangle(400, lootY, 40, 40, 0x8888ff).setScrollFactor(0);
+        }
+        this.add.text(450, lootY, `${this.victoryLoot.armor} (upgraded!)`, {
+          fontSize: '20px',
+          color: '#00ff00'
+        }).setOrigin(0, 0.5).setScrollFactor(0);
+        
+        // Upgrade player armor
+        this.gameData.current_armor = this.victoryLoot.armor;
+        lootY += 40;
+      }
+      
+      // Medical item loot
+      try {
+        this.add.image(400, lootY, this.victoryLoot.medical).setScrollFactor(0).setScale(0.6);
+      } catch (error) {
+        this.add.rectangle(400, lootY, 25, 25, 0x00aa00).setScrollFactor(0);
+      }
+      this.add.text(450, lootY, `${this.victoryLoot.medAmount}x ${this.victoryLoot.medical.replace('_', ' ')}`, {
+        fontSize: '20px',
+        color: '#ffffff'
+      }).setOrigin(0, 0.5).setScrollFactor(0);
+      
+      // Add medical items to inventory
+      this.gameData.med[this.victoryLoot.medical] = (this.gameData.med[this.victoryLoot.medical] || 0) + this.victoryLoot.medAmount;
     }
     
-    // Display loot with weapon icons
-    let lootY = 260;
-    
-    // Weapon loot
-    try {
-      this.add.image(400, lootY, "weapon " + this.victoryLoot.weapon).setScrollFactor(0).setScale(0.8);
-    } catch (error) {
-      // Fallback icon
-      this.add.rectangle(400, lootY, 40, 40, 0x888888).setScrollFactor(0);
-    }
-    this.add.text(450, lootY, `${this.victoryLoot.weapon}`, {
-      fontSize: '20px',
-      color: '#ffffff'
-    }).setOrigin(0, 0.5).setScrollFactor(0);
-    
-    lootY += 40;
-    
-    // Ammo loot
-    try {
-      this.add.image(400, lootY, this.victoryLoot.ammoType).setScrollFactor(0);
-    } catch (error) {
-      // Fallback icon
-      this.add.rectangle(400, lootY, 30, 30, 0x666666).setScrollFactor(0);
-    }
-    this.add.text(450, lootY, `${this.victoryLoot.ammoAmount} rounds`, {
-      fontSize: '20px',
-      color: '#ffffff'
-    }).setOrigin(0, 0.5).setScrollFactor(0);
-    
-    lootY += 40;
-    
-    // Medical item loot
-    try {
-      this.add.image(400, lootY, this.victoryLoot.medical).setScrollFactor(0).setScale(0.6);
-    } catch (error) {
-      this.add.rectangle(400, lootY, 25, 25, 0x00aa00).setScrollFactor(0);
-    }
-    this.add.text(450, lootY, `${this.victoryLoot.medAmount}x ${this.victoryLoot.medical.replace('_', ' ')}`, {
-      fontSize: '20px',
-      color: '#ffffff'
-    }).setOrigin(0, 0.5).setScrollFactor(0);
-    
-    // Add loot to inventory
-    if (!this.gameData.weapons.includes(this.victoryLoot.weapon)) {
-      this.gameData.weapons.push(this.victoryLoot.weapon);
-    }
-    this.gameData.ammo[this.victoryLoot.ammoType] = (this.gameData.ammo[this.victoryLoot.ammoType] || 0) + this.victoryLoot.ammoAmount;
-    this.gameData.med[this.victoryLoot.medical] = (this.gameData.med[this.victoryLoot.medical] || 0) + this.victoryLoot.medAmount;    // Continue prompt
+    // Continue prompt
     this.add.text(512, 450, 'Press SPACE to continue traveling', {
       fontSize: '18px',
       color: '#cccccc'
@@ -1198,13 +1236,13 @@ export class BattleScene extends Phaser.Scene {
     
     // Input handling
     this.input.keyboard!.once('keydown-SPACE', () => {
-      this.scene.start('WorldMapScene');
+      this.scene.start('WorldMap');
     });
     
     // Auto continue after delay
     this.time.delayedCall(10000, () => {
       if (this.scene.isActive()) {
-        this.scene.start('WorldMapScene');
+        this.scene.start('WorldMap');
       }
     });
   }
@@ -1235,37 +1273,28 @@ export class BattleScene extends Phaser.Scene {
       this.isHardBreathSoundPlaying = false;
     }
     
-    // Clear the screen with death background
-    this.add.rectangle(512, 300, 1024, 600, 0x000000).setScrollFactor(0);
-    
-    // Add death image if available
+    // Play death sound
     try {
-      this.add.image(512, 300, "death 1").setScrollFactor(0);
+      this.sound.play("player wounded", { volume: 0.8 });
     } catch (error) {
-      // Fallback to text
-      this.add.text(512, 250, 'YOU DIED', {
-        fontSize: '48px',
-        color: '#ff0000'
-      }).setOrigin(0.5).setScrollFactor(0);
-      
-      this.add.text(512, 320, 'Press ESC to return to main menu', {
-        fontSize: '24px',
-        color: '#ffffff'
-      }).setOrigin(0.5).setScrollFactor(0);
+      console.log("Player death sound not available");
     }
     
-    // Allow manual return to menu
-    this.input.keyboard!.once('keydown-ESC', () => {
-      this.bridge.getGameData().health = 30; // Reset health
-      this.scene.start('MainMenuScene');
-    });
-    
-    // Auto return after delay
-    this.time.delayedCall(5000, () => {
-      if (this.scene.isActive()) {
-        this.bridge.getGameData().health = 30; // Reset health
-        this.scene.start('MainMenuScene');
-      }
+    // Wait a moment for death sound to start, then transition to DeadScene
+    this.time.delayedCall(1000, () => {
+      // Reset health for restart
+      this.gameDataService.setHealth(30);
+      
+      // Transition to proper DeadScene
+      this.scene.start('DeadScene', {
+        cause: 'battle',
+        finalStats: {
+          level: this.gameData.levelCount,
+          experience: this.gameData.experience,
+          weapon: this.chosenWeapon.name,
+          armor: this.chosenArmor.name
+        }
+      });
     });
   }
 
@@ -1381,22 +1410,133 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private generateVictoryLoot(): void {
-    // Generate STABLE loot based on current game state (won't change on re-render)
+    // Generate STABLE loot based on defeated enemies and current game state
     const seed = this.gameData.experience + this.gameData.levelCount * 13 + this.enemies.length * 7;
     Phaser.Math.RND.sow([seed]);
     
-    const weaponLoot = ['9mm pistol', 'Combat shotgun', 'Laser pistol', '44 Magnum revolver'];
-    const ammoTypes = ['mm_9', 'mm_12', 'energy_cell', 'magnum_44'];
-    const medicalItems = ['first_aid_kit', 'jet', 'buffout'];
+    // Check what types of enemies we're fighting
+    const humanEnemies: string[] = [];
+    const creatureEnemies: string[] = [];
+    
+    this.enemies.forEach(enemy => {
+      if (enemy.name.includes('Mantis')) {
+        creatureEnemies.push(enemy.name);
+      } else if (enemy.name.includes('Cannibal') || enemy.name.includes('Raider') || enemy.name.includes('Tribe')) {
+        humanEnemies.push(enemy.name);
+      }
+    });
+    
+    // If no human enemies, no loot (creatures don't drop loot)
+    if (humanEnemies.length === 0) {
+      this.victoryLoot = null;
+      console.log("No loot - only creatures defeated");
+      return;
+    }
+    
+    // Generate loot based on human enemies
+    const enemyWeapons = this.getEnemyWeapons(humanEnemies);
+    const enemyArmor = this.getEnemyArmor(humanEnemies);
+    
+    // Generate ammo from enemy weapons
+    const ammoTypes: string[] = [];
+    enemyWeapons.forEach(weapon => {
+      const weaponData = this.weapons.find(w => w.name === weapon);
+      if (weaponData && weaponData.type !== 'melee') {
+        ammoTypes.push(weaponData.type);
+      }
+    });
+    
+    // Only generate loot if we have ammo types
+    const selectedAmmoType = ammoTypes.length > 0 ? Phaser.Math.RND.pick(ammoTypes) : null;
     
     this.victoryLoot = {
-      weapon: Phaser.Math.RND.pick(weaponLoot),
-      ammoType: Phaser.Math.RND.pick(ammoTypes),
-      ammoAmount: Phaser.Math.Between(30, 80),
-      medical: Phaser.Math.RND.pick(medicalItems),
-      medAmount: Phaser.Math.Between(1, 3)
+      weapon: null, // No weapons dropped, only ammo
+      ammoType: selectedAmmoType,
+      ammoAmount: selectedAmmoType ? Phaser.Math.Between(15, 40) : 0,
+      armor: this.shouldGetArmor(enemyArmor) ? enemyArmor : null,
+      medical: Phaser.Math.RND.pick(['first_aid_kit', 'jet', 'buffout']),
+      medAmount: Phaser.Math.Between(1, 2)
     };
     
-    console.log("Pre-generated victory loot:", this.victoryLoot);
+    console.log("Generated victory loot from humans:", this.victoryLoot);
+  }
+  
+  private getEnemyWeapons(humanEnemies: string[]): string[] {
+    const weapons: string[] = [];
+    humanEnemies.forEach(enemyName => {
+      // Extract weapon from enemy name (e.g., "Raider - Leather Armor - 9mm pistol")
+      const parts = enemyName.split(' - ');
+      if (parts.length === 3) {
+        weapons.push(parts[2]); // Third part is weapon
+      } else if (enemyName.includes('Cannibal')) {
+        weapons.push('Baseball bat'); // Cannibals use melee
+      }
+    });
+    return weapons;
+  }
+  
+  private getEnemyArmor(humanEnemies: string[]): string | null {
+    const armors: string[] = [];
+    humanEnemies.forEach(enemyName => {
+      // Extract armor from enemy name (e.g., "Raider - Leather Armor - 9mm pistol")
+      const parts = enemyName.split(' - ');
+      if (parts.length === 3) {
+        armors.push(parts[1]); // Second part is armor
+      }
+    });
+    
+    if (armors.length === 0) return null;
+    
+    // Find the best armor from enemies
+    const armorStats = armors.map(armorName => 
+      this.armors.find(a => a.name === armorName)
+    ).filter(Boolean);
+    
+    if (armorStats.length === 0) return null;
+    
+    // Return best armor by AC value
+    const bestArmor = armorStats.reduce((best, current) => 
+      current!.ac > best!.ac ? current : best
+    );
+    
+    return bestArmor!.name;
+  }
+  
+  private shouldGetArmor(enemyArmor: string | null): boolean {
+    if (!enemyArmor) return false;
+    
+    const enemyArmorData = this.armors.find(a => a.name === enemyArmor);
+    const playerArmorData = this.chosenArmor;
+    
+    if (!enemyArmorData || !playerArmorData) return false;
+    
+    // Only drop armor if it's better than player's current armor
+    return enemyArmorData.ac > playerArmorData.ac;
+  }
+
+  private calculatePlayerLevel(experience: number): { level: number; currentExp: number; expToNext: number } {
+    let level = 1;
+    let totalExpNeeded = 0;
+    let expForCurrentLevel = 1000; // Base experience for level 1
+    
+    // Calculate what level the player should be
+    while (experience >= totalExpNeeded + expForCurrentLevel) {
+      totalExpNeeded += expForCurrentLevel;
+      level++;
+      expForCurrentLevel *= 2; // Double experience needed for each level
+    }
+    
+    const currentExp = experience - totalExpNeeded;
+    const expToNext = expForCurrentLevel;
+    
+    return { level, currentExp, expToNext };
+  }
+
+  private updatePlayerLevel(): void {
+    const levelInfo = this.calculatePlayerLevel(this.gameData.experience || 0);
+    this.gameData.levelCount = levelInfo.level;
+    
+    // Update the display
+    this.updateStatsDisplay();
   }
 }

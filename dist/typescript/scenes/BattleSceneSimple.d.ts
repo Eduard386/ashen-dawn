@@ -1,9 +1,10 @@
 /**
  * Complete Legacy BattleScene - Full functionality restored
  * Includes enemy movement, weapon switching, armor display, stats, sounds
+ * Now using pure TypeScript GameDataService instead of LegacyBridge
  */
 export declare class BattleScene extends Phaser.Scene {
-    private bridge;
+    private gameDataService;
     private gameData;
     private enemies;
     private enemySprites;
