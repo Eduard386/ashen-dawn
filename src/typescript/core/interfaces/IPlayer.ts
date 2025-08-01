@@ -1,53 +1,29 @@
 import { AmmoType, MedicalItemType } from '../types/GameTypes';
+// Import segregated interfaces
+import { 
+  ICharacterStats, 
+  ICharacterSkills, 
+  IMedicalInventory as ISegregatedMedicalInventory,
+  IAmmoInventory as ISegregatedAmmoInventory,
+  ICharacterInventory,
+  ICharacterEquipment
+} from './IPlayerSegregated';
 
-export interface IPlayerSkills {
-  small_guns: number;
-  big_guns: number;
-  energy_weapons: number;
-  melee_weapons: number;
-  pyrotechnics: number;
-  lockpick: number;
-  science: number;
-  repair: number;
-  medicine: number;
-  barter: number;
-  speech: number;
-  surviving: number;
-}
+// Legacy compatibility interfaces - delegating to segregated interfaces
+export interface IPlayerSkills extends ICharacterSkills {}
 
-export interface IMedicalInventory {
-  first_aid_kit: number;
-  jet: number;
-  buffout: number;
-  mentats: number;
-  psycho: number;
-}
+export interface IMedicalInventory extends ISegregatedMedicalInventory {}
+export interface IAmmoInventory extends ISegregatedAmmoInventory {}
+export interface IInventory extends ICharacterInventory {}
 
-export interface IAmmoInventory {
-  mm_9: number;
-  magnum_44: number;
-  mm_12: number;
-  mm_5_45: number;
-  energy_cell: number;
-  frag_grenade: number;
-}
-
-export interface IInventory {
-  med: IMedicalInventory;
-  ammo: IAmmoInventory;
-}
-
-export interface IPlayerCharacter {
-  readonly id: string;
-  levelCount: number;
-  health: number;
-  maxHealth: number;  // Removed readonly to allow level up modifications
-  experience: number;
-  skills: IPlayerSkills;
+// Legacy player interface for backward compatibility - flat structure
+export interface IPlayerCharacter extends ICharacterStats, ICharacterSkills {
+  // Flatten inventory
+  inventory: ICharacterInventory;
+  // Flatten equipment
   currentWeapon: string;
   currentArmor: string;
   weapons: string[];
-  inventory: IInventory;
 }
 
 // Service interface for managing player state

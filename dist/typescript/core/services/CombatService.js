@@ -68,7 +68,7 @@ export class CombatService {
      * Calculate hit chance for player attack
      */
     calculateHitChance(player, weapon, enemy) {
-        const skillLevel = player.skills[weapon.skill];
+        const skillLevel = player[weapon.skill]; // Access skill directly as property
         const baseChance = skillLevel; // Skill directly affects hit chance
         // Apply weapon accuracy modifier
         const weaponModifier = (weapon.criticalChance || 0) / 2; // Weapon quality affects accuracy
@@ -92,7 +92,7 @@ export class CombatService {
         let damage = baseDamage * critMultiplier;
         // Apply skill bonus (higher skill = more damage)
         if (attacker) {
-            const skillLevel = attacker.skills[weapon.skill];
+            const skillLevel = attacker[weapon.skill]; // Access skill directly as property
             const skillBonus = Math.floor((skillLevel - 50) / 10); // +1 damage per 10 skill above 50
             damage += Math.max(0, skillBonus);
         }

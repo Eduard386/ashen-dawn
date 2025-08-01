@@ -84,6 +84,8 @@ export class EnemyService {
             type: legacyEnemy.type,
             maxLevel: legacyEnemy.maxLevel,
             currentHealth: legacyEnemy.defence.health,
+            maxHealth: legacyEnemy.defence.health, // Same as current health initially
+            experienceReward: legacyEnemy.experience || 15, // Default experience reward
             defence: {
                 health: legacyEnemy.defence.health,
                 armorClass: legacyEnemy.defence.ac,
@@ -97,7 +99,9 @@ export class EnemyService {
                     min: legacyEnemy.attack.damage.min,
                     max: legacyEnemy.attack.damage.max
                 },
-                shots: legacyEnemy.attack.shots
+                shots: legacyEnemy.attack.shots,
+                attackSpeed: 1.0, // Default attack speed
+                criticalChance: 5 // Default critical chance
             },
             spawning: {
                 min: legacyEnemy.amount.min,

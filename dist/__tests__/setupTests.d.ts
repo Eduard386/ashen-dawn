@@ -1,58 +1,57 @@
-import 'jest-extended';
-export declare const createMockPlayer: () => {
-    name: string;
-    health: number;
-    maxHealth: number;
-    armor: number;
-    weapons: any[];
-    inventory: {
-        medkits: number;
-        stimpaks: number;
-    };
-    skills: {
-        smallGuns: number;
-        bigGuns: number;
-        energyWeapons: number;
-        unarmed: number;
-        meleeWeapons: number;
-        throwing: number;
-        firstAid: number;
-        doctor: number;
-        sneak: number;
-        lockpick: number;
-        steal: number;
-        traps: number;
-    };
+/**
+ * Jest Setup File
+ * Configures global test environment and mocks
+ */
+declare const localStorageMock: {
+    getItem: jest.Mock<any, [], any>;
+    setItem: jest.Mock<any, any, any>;
+    removeItem: jest.Mock<any, any, any>;
+    clear: jest.Mock<any, any, any>;
+    length: number;
+    key: jest.Mock<any, [], any>;
 };
-export declare const createMockWeapon: () => {
-    name: string;
-    damage: number;
-    ammoType: string;
-    currentAmmo: number;
-    maxAmmo: number;
-    range: number;
-    skillRequired: "smallGuns";
-    accuracy: number;
-};
-export declare const createMockEnemy: () => {
-    name: string;
-    health: number;
-    maxHealth: number;
-    armor: number;
-    weapon: {
-        name: string;
-        damage: number;
-        ammoType: string;
-        currentAmmo: number;
-        maxAmmo: number;
-        range: number;
-        skillRequired: "smallGuns";
-        accuracy: number;
-    };
-    dropRate: number;
-    experienceValue: number;
-    skills: {
-        combat: number;
-        armor: number;
-    };
+declare const originalConsole: {
+    assert(condition?: boolean, ...data: any[]): void;
+    assert(value: any, message?: string, ...optionalParams: any[]): void;
+    clear(): void;
+    clear(): void;
+    count(label?: string): void;
+    count(label?: string): void;
+    countReset(label?: string): void;
+    countReset(label?: string): void;
+    debug(...data: any[]): void;
+    debug(message?: any, ...optionalParams: any[]): void;
+    dir(item?: any, options?: any): void;
+    dir(obj: any, options?: import("util").InspectOptions): void;
+    dirxml(...data: any[]): void;
+    dirxml(...data: any[]): void;
+    error(...data: any[]): void;
+    error(message?: any, ...optionalParams: any[]): void;
+    group(...data: any[]): void;
+    group(...label: any[]): void;
+    groupCollapsed(...data: any[]): void;
+    groupCollapsed(...label: any[]): void;
+    groupEnd(): void;
+    groupEnd(): void;
+    info(...data: any[]): void;
+    info(message?: any, ...optionalParams: any[]): void;
+    log(...data: any[]): void;
+    log(message?: any, ...optionalParams: any[]): void;
+    table(tabularData?: any, properties?: string[]): void;
+    table(tabularData: any, properties?: readonly string[]): void;
+    time(label?: string): void;
+    time(label?: string): void;
+    timeEnd(label?: string): void;
+    timeEnd(label?: string): void;
+    timeLog(label?: string, ...data: any[]): void;
+    timeLog(label?: string, ...data: any[]): void;
+    timeStamp(label?: string): void;
+    timeStamp(label?: string): void;
+    trace(...data: any[]): void;
+    trace(message?: any, ...optionalParams: any[]): void;
+    warn(...data: any[]): void;
+    warn(message?: any, ...optionalParams: any[]): void;
+    Console: console.ConsoleConstructor;
+    profile(label?: string): void;
+    profileEnd(label?: string): void;
 };

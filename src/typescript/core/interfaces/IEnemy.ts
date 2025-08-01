@@ -1,17 +1,22 @@
 import { EnemyType, IDamageRange } from '../types/GameTypes';
+// Import segregated interfaces
+import {
+  IEnemyStats,
+  IEnemyDefense,
+  IEnemyAttack,
+  IEnemySpawning,
+  IEnemy as ISegregatedEnemy,
+  IEnemyService as ISegregatedEnemyService
+} from './IEnemySegregated';
 
-export interface IDefenceStats {
-  health: number;
-  armorClass: number;
-  damageThreshold: number;
-  damageResistance: number;
+// Legacy compatibility interfaces - delegating to segregated interfaces
+export interface IDefenceStats extends IEnemyDefense {
+  health: number; // Add health for backward compatibility
 }
 
-export interface IAttackStats {
-  hitChance: number;
-  weapon?: string;
-  damage: IDamageRange;
-  shots: number;
+export interface IAttackStats extends IEnemyAttack {
+  // Ensure attackSpeed is included for backward compatibility
+  attackSpeed: number;
 }
 
 export interface ISpawnConfig {
@@ -19,17 +24,16 @@ export interface ISpawnConfig {
   max: number;
 }
 
-export interface IEnemy {
-  readonly id: string;
-  readonly name: string;
-  readonly type: EnemyType;
-  maxLevel: number;
-  currentHealth: number;
+// Legacy enemy interface for backward compatibility
+export interface IEnemy extends IEnemyStats {
+  // Map legacy properties to segregated interface
   defence: IDefenceStats;
   attack: IAttackStats;
   spawning: ISpawnConfig;
-  readonly experience: number;
+  // Additional legacy properties for backward compatibility
   readonly sprites: string[];
+  currentHealth: number;
+  readonly experience: number;
 }
 
 export interface ICombatant {
@@ -42,8 +46,6 @@ export interface ICombatant {
 }
 
 // Service interface for enemy management
-export interface IEnemyService {
-  createEnemy(name: string, level?: number): IEnemy;
-  generateEnemies(type: string, level: number): IEnemy[];
-  parseRaiderEquipment(name: string): { weapon?: string; armor?: string };
+export interface IEnemyService extends ISegregatedEnemyService {
+  // Legacy compatibility methods
 }

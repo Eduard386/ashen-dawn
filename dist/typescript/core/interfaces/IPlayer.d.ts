@@ -1,47 +1,17 @@
-export interface IPlayerSkills {
-    small_guns: number;
-    big_guns: number;
-    energy_weapons: number;
-    melee_weapons: number;
-    pyrotechnics: number;
-    lockpick: number;
-    science: number;
-    repair: number;
-    medicine: number;
-    barter: number;
-    speech: number;
-    surviving: number;
+import { ICharacterStats, ICharacterSkills, IMedicalInventory as ISegregatedMedicalInventory, IAmmoInventory as ISegregatedAmmoInventory, ICharacterInventory } from './IPlayerSegregated';
+export interface IPlayerSkills extends ICharacterSkills {
 }
-export interface IMedicalInventory {
-    first_aid_kit: number;
-    jet: number;
-    buffout: number;
-    mentats: number;
-    psycho: number;
+export interface IMedicalInventory extends ISegregatedMedicalInventory {
 }
-export interface IAmmoInventory {
-    mm_9: number;
-    magnum_44: number;
-    mm_12: number;
-    mm_5_45: number;
-    energy_cell: number;
-    frag_grenade: number;
+export interface IAmmoInventory extends ISegregatedAmmoInventory {
 }
-export interface IInventory {
-    med: IMedicalInventory;
-    ammo: IAmmoInventory;
+export interface IInventory extends ICharacterInventory {
 }
-export interface IPlayerCharacter {
-    readonly id: string;
-    levelCount: number;
-    health: number;
-    maxHealth: number;
-    experience: number;
-    skills: IPlayerSkills;
+export interface IPlayerCharacter extends ICharacterStats, ICharacterSkills {
+    inventory: ICharacterInventory;
     currentWeapon: string;
     currentArmor: string;
     weapons: string[];
-    inventory: IInventory;
 }
 export interface IGameStateService {
     getPlayer(): IPlayerCharacter;

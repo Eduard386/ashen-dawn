@@ -22,13 +22,15 @@ export class PlayerService {
    */
   public initializeFromLegacy(legacyData: any): IPlayerCharacter {
     // Convert legacy format to TypeScript interface
+    const legacySkills = this.convertLegacySkills(legacyData.skills || {});
     const playerData: IPlayerCharacter = {
       id: crypto.randomUUID(),
       levelCount: legacyData.levelCount || 1,
       health: legacyData.health || 30,
       maxHealth: this.calculateMaxHealth(legacyData.levelCount || 1),
       experience: legacyData.experience || 0,
-      skills: this.convertLegacySkills(legacyData.skills || {}),
+      // Flatten skills to match IPlayerCharacter
+      ...legacySkills,
       currentWeapon: this.convertWeaponName(legacyData.current_weapon || 'baseball_bat'),
       currentArmor: this.convertArmorName(legacyData.current_armor || 'leather_jacket'),
       weapons: (legacyData.weapons || []).map((weapon: string) => this.convertWeaponName(weapon)),
@@ -149,11 +151,27 @@ export class PlayerService {
   public toLegacyFormat(): any {
     if (!this.playerData) return null;
 
+    // Reconstruct skills object from flattened properties
+    const skills = {
+      small_guns: this.playerData.small_guns,
+      big_guns: this.playerData.big_guns,
+      energy_weapons: this.playerData.energy_weapons,
+      melee_weapons: this.playerData.melee_weapons,
+      pyrotechnics: this.playerData.pyrotechnics,
+      lockpick: this.playerData.lockpick,
+      science: this.playerData.science,
+      repair: this.playerData.repair,
+      medicine: this.playerData.medicine,
+      barter: this.playerData.barter,
+      speech: this.playerData.speech,
+      surviving: this.playerData.surviving
+    };
+
     return {
       levelCount: this.playerData.levelCount,
       health: this.playerData.health,
       experience: this.playerData.experience,
-      skills: this.playerData.skills,
+      skills: skills,
       current_weapon: this.playerData.currentWeapon.replace('_', ' '),
       current_armor: this.playerData.currentArmor.replace('_', ' '),
       weapons: this.playerData.weapons.map(w => w.replace('_', ' ')),

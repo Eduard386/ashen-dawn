@@ -1,31 +1,21 @@
-import { EnemyType, IDamageRange } from '../types/GameTypes';
-export interface IDefenceStats {
+import { IEnemyStats, IEnemyDefense, IEnemyAttack, IEnemyService as ISegregatedEnemyService } from './IEnemySegregated';
+export interface IDefenceStats extends IEnemyDefense {
     health: number;
-    armorClass: number;
-    damageThreshold: number;
-    damageResistance: number;
 }
-export interface IAttackStats {
-    hitChance: number;
-    weapon?: string;
-    damage: IDamageRange;
-    shots: number;
+export interface IAttackStats extends IEnemyAttack {
+    attackSpeed: number;
 }
 export interface ISpawnConfig {
     min: number;
     max: number;
 }
-export interface IEnemy {
-    readonly id: string;
-    readonly name: string;
-    readonly type: EnemyType;
-    maxLevel: number;
-    currentHealth: number;
+export interface IEnemy extends IEnemyStats {
     defence: IDefenceStats;
     attack: IAttackStats;
     spawning: ISpawnConfig;
-    readonly experience: number;
     readonly sprites: string[];
+    currentHealth: number;
+    readonly experience: number;
 }
 export interface ICombatant {
     getId(): string;
@@ -35,11 +25,5 @@ export interface ICombatant {
     getSkillValue(skill: string): number;
     defence: IDefenceStats;
 }
-export interface IEnemyService {
-    createEnemy(name: string, level?: number): IEnemy;
-    generateEnemies(type: string, level: number): IEnemy[];
-    parseRaiderEquipment(name: string): {
-        weapon?: string;
-        armor?: string;
-    };
+export interface IEnemyService extends ISegregatedEnemyService {
 }
