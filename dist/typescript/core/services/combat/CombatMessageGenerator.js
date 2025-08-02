@@ -26,7 +26,8 @@ export class CombatMessageGenerator {
                 `❌ The ${weaponName} failed to hit!`,
                 `❌ You couldn't land the ${weaponName} attack!`
             ];
-            missMessages.push(...weaponMissMessages);
+            // When weapon name is provided, prefer weapon-specific messages
+            return weaponMissMessages[Math.floor(Math.random() * weaponMissMessages.length)];
         }
         return missMessages[Math.floor(Math.random() * missMessages.length)];
     }
