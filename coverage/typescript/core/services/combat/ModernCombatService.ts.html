@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.63% </span>
+                <span class="strong">77.27% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>39/44</span>
+                <span class='fraction'>34/44</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.63% </span>
+                <span class="strong">77.27% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>39/44</span>
+                <span class='fraction'>34/44</span>
             </div>
         
             
@@ -357,6 +357,19 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -367,19 +380,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -390,23 +390,23 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -592,8 +592,8 @@ export class ModernCombatService {
     // Check hit calculation
     const hitCalc = this.hitChanceCalculator.calculateHitChance(player, weapon, enemy);
     
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!hitCalc.isHit) {
-<span class="cstat-no" title="statement not covered" >      return {</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!hitCalc.isHit) {
+      return {
         isHit: false,
         damage: 0,
         isCritical: false,
@@ -603,10 +603,10 @@ export class ModernCombatService {
     }
 &nbsp;
     // Calculate damage
-    const damageCalc = this.damageCalculator.calculateDamage(weapon, enemy, player);
-    const newHealth = Math.max(0, enemy.currentHealth - damageCalc.finalDamage);
+    const damageCalc = <span class="cstat-no" title="statement not covered" >this.damageCalculator.calculateDamage(weapon, enemy, player);</span>
+    const newHealth = <span class="cstat-no" title="statement not covered" >Math.max(0, enemy.currentHealth - damageCalc.finalDamage);</span>
 &nbsp;
-    return {
+<span class="cstat-no" title="statement not covered" >    return {</span>
       isHit: true,
       damage: damageCalc.finalDamage,
       isCritical: damageCalc.isCritical,
@@ -625,8 +625,8 @@ export class ModernCombatService {
     const hitChance = enemy.attack.hitChance;
     const isHit = Math.random() * 100 &lt; hitChance;
 &nbsp;
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!isHit) {
-<span class="cstat-no" title="statement not covered" >      return {</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!isHit) {
+      return {
         isHit: false,
         damage: 0,
         isCritical: false,
@@ -636,13 +636,13 @@ export class ModernCombatService {
     }
 &nbsp;
     // Calculate base damage
-    const baseDamage = Math.floor(Math.random() * (enemy.attack.damage.max - enemy.attack.damage.min + 1)) + enemy.attack.damage.min;
+    const baseDamage = <span class="cstat-no" title="statement not covered" >Math.floor(Math.random() * (enemy.attack.damage.max - enemy.attack.damage.min + 1)) + enemy.attack.damage.min;</span>
     
     // Apply player armor reduction
-    const finalDamage = this.armorCalculator.calculatePlayerArmorReduction(player, baseDamage);
-    const newHealth = Math.max(0, player.health - finalDamage);
+    const finalDamage = <span class="cstat-no" title="statement not covered" >this.armorCalculator.calculatePlayerArmorReduction(player, baseDamage);</span>
+    const newHealth = <span class="cstat-no" title="statement not covered" >Math.max(0, player.health - finalDamage);</span>
 &nbsp;
-    return {
+<span class="cstat-no" title="statement not covered" >    return {</span>
       isHit: true,
       damage: finalDamage,
       isCritical: false, // Enemies don't crit for now
@@ -778,7 +778,7 @@ export class ModernCombatService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-02T13:26:40.292Z
+                at 2025-08-03T18:26:24.942Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
